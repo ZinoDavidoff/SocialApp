@@ -1,0 +1,43 @@
+mat-toolbar {
+  display: flex;
+  justify-content: space-between;
+  height: 70px;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}
+a {
+  text-decoration: none;
+  color: white;
+}
+.navigation-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+.icon {
+  display: inline-block;
+  height: 25px;
+  margin: 0 auto;
+  padding-right: 10px;
+  text-align: center;
+  vertical-align: middle;
+  width: 15%;
+}
+img {
+  width: 60px;
+  filter: brightness(0) invert(1) drop-shadow(4px 0px 0px rgba(0, 0, 0, 1));
+}
+.blog-tittle{
+    padding-left: 1rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    font-family: cursive;
+}
+.active {
+  color: black;
+}
+

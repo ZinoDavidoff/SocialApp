@@ -1,0 +1,38 @@
+<div>
+    <h2 mat-dialog-title>Add or Edit a Post</h2>
+    <mat-dialog-content>
+      <form [formGroup]="form">
+        <mat-form-field appearance="standard">
+          <mat-label>Author</mat-label>
+          <input [readonly]="editable"  matInput placeholder="{{activeUser.displayName}}" formControlName="author" />
+        </mat-form-field>
+  
+        <mat-form-field appearance="standard">
+            <mat-label>Category</mat-label>
+            <input matInput placeholder="Enter your name" formControlName="category" />
+          </mat-form-field>
+
+        <mat-form-field appearance="standard">
+            <mat-label>Description</mat-label>
+            <textarea
+              matInput
+              placeholder="Description"
+              formControlName="description"
+
+            ></textarea>
+          </mat-form-field>
+      </form>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-raised-button (click)="dialogRef.close(false); close()" color="primary">
+        Close
+      </button>
+      <button mat-raised-button color="primary" *ngIf="!hasId" [disabled]="!form.valid" (click)="submit(form.value); createPost()">
+        Submit
+      </button>
+      <button mat-raised-button color="primary" *ngIf="hasId"  [disabled]="!form.valid" (click)="submit(form.value); editPost()">
+        Edit
+      </button>
+    </mat-dialog-actions>
+</div>
+  

@@ -1,0 +1,105 @@
+<div class="sticky-nav"></div>
+<mat-card *ngIf="post$ | async as post; else loadingRef">
+  <mat-card-header>
+    <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba2.jpg">
+    <mat-card-title>{{post.author}}</mat-card-title>
+    <mat-card-subtitle>{{post.category}}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p>
+      {{post.description}}
+    </p>
+  </mat-card-content>
+  <mat-card-subtitle class="right">
+    <small *ngIf="post.isEdited">Edited: </small>
+    {{post.createdOn | date: 'dd MMM, yyyy h:mm a'}}
+  </mat-card-subtitle>
+  <mat-card-actions class="no-space">
+    <div>
+      <button matTooltip="Like this Post" mat-button color="primary"
+        class="first-child"><mat-icon>thumb_up_alt</mat-icon></button>
+      <button matTooltip="Edit this Post" mat-button color="accent"><mat-icon>edit</mat-icon></button>
+      <button matTooltip="Delete this Post" mat-button color="warn"><mat-icon>delete</mat-icon></button>
+    </div>
+    <div>
+      <button mat-button color="primary" (click)="isDisplayed = !isDisplayed;">Write a Comment<mat-icon>
+          comment</mat-icon></button>
+    </div>
+  </mat-card-actions>
+</mat-card>
+
+<ng-template #loadingRef>
+  <div class="spinner"></div>
+</ng-template>
+
+<div>
+  <div class="container" *ngIf="isDisplayed" [@itemAnim]>
+    <mat-card [@listAnim]>
+      <mat-form-field appearance="outline" class="animated-mat-field">
+        <mat-label>Comment</mat-label>
+        <textarea matInput placeholder="Write a Comment"></textarea>
+      </mat-form-field>
+      <div class="text-end">
+        <button mat-raised-button color="primary">+ Add</button>
+      </div>
+    </mat-card>
+  </div>
+</div>
+
+<div class="container" id="flex-reverse" *ngIf="post$ | async as post; else loadingRef">
+
+  <div style="margin-bottom: 1rem;">
+    <mat-card-header class="d-flex flex-column">
+      <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba2.jpg" style="place-self: center;">
+      <mat-card-title style="margin-top: 10px;">{{post.author}}</mat-card-title>
+    </mat-card-header>
+  </div>
+
+  <mat-card style="margin-top: 0;">
+    <mat-card-content>
+      <p>
+        {{post.description}}
+      </p>
+    </mat-card-content>
+
+    <mat-card-actions class="right-align">
+      <div class="text-right">
+        <button matTooltip="Edit this Comment" mat-button color="accent"><mat-icon>edit</mat-icon></button>
+        <button matTooltip="Delete this Comment" mat-button color="warn"><mat-icon>delete</mat-icon></button>
+        <mat-card-subtitle class="right">
+          {{post.createdOn | date: 'dd MMM, yyyy h:mm a'}}
+        </mat-card-subtitle>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+
+<div class="container" id="flex-reverse" *ngIf="post$ | async as post; else loadingRef">
+
+  <div style="margin-bottom: 1rem;">
+    <mat-card-header class="d-flex flex-column">
+      <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba2.jpg" style="place-self: center;">
+      <mat-card-title style="margin-top: 10px;">{{post.author}}</mat-card-title>
+    </mat-card-header>
+  </div>
+
+  <mat-card style="margin-top: 0;">
+    <mat-card-content>
+      <p>
+        {{post.description}}
+      </p>
+    </mat-card-content>
+
+    <mat-card-actions class="right-align">
+      <div class="text-right">
+        <button matTooltip="Edit this Comment" mat-button color="accent"><mat-icon>edit</mat-icon></button>
+        <button matTooltip="Delete this Comment" mat-button color="warn"><mat-icon>delete</mat-icon></button>
+        <mat-card-subtitle class="right">
+          {{post.createdOn | date: 'dd MMM, yyyy h:mm a'}}
+        </mat-card-subtitle>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

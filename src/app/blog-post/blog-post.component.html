@@ -1,0 +1,67 @@
+<div class="sticky-nav"></div>
+<div class="grid">
+  <h1 class="text-center">Snorky's Timeline</h1>
+  <div class="searchbar">
+      <mat-form-field class="example-full-width" color="primary">
+        <mat-icon matPrefix class="icon">search</mat-icon>
+        <mat-label>Search Post</mat-label>
+        <input matInput type="search" class="toolbar-search" [formControl]="textSearch">
+      </mat-form-field>
+      <mat-form-field class="example-full-width" style=" margin-left:10px;">
+        <!-- <mat-label style="display: inline;">Filter By</mat-label> -->
+        <mat-select [formControl]="categories">
+          <mat-option value="Author">
+            Author
+          </mat-option>
+          <mat-option value="Categories">
+            Categories
+          </mat-option>
+          <mat-option value="Description" >
+            Description
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
+</div>
+
+  <div class="container-fluid px-5" *ngIf="filteredByDescription | async as posts; else loadingRef">
+    <div class="row g-3" >
+      <div class="col-3" *ngFor="let post of posts | sorted">
+        <mat-card routerLink="/blog/post/{{post.id}}" class="h-100">
+          <mat-card-header>  
+            <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba2.jpg">
+            <mat-card-title>{{post.author}}</mat-card-title>
+            <mat-card-subtitle>{{post.category}}</mat-card-subtitle>
+          </mat-card-header>
+        
+          <mat-card-content>
+            <p>
+              {{post.description | slice: 0 : 200}}...
+              <a role="button" style="color: #00695c; text-decoration: underline;">Read More</a>
+            </p>
+          </mat-card-content>
+          <mat-card-subtitle class="right">
+            <small *ngIf="post.isEdited">Edited: </small>
+            {{post.createdOn | date: 'dd MMM, yyyy h:mm a'}}
+          </mat-card-subtitle>
+          <mat-card-actions class="no-space">
+            <div>
+              <button mat-button color="primary" matTooltip="Like this Comment" class="first-child"><mat-icon>thumb_up_alt</mat-icon></button>
+              <button mat-button color="accent" matTooltip="Edit this Comment" (click)='onEditPost(post, $event)'><mat-icon>edit</mat-icon></button>
+              <button mat-button color="warn" matTooltip="Delete this Comment" (click)='onDeletePost(post, $event)'><mat-icon>delete</mat-icon></button>
+            </div>
+            <div>
+              <button mat-button color="primary">Write a Comment<mat-icon> comment</mat-icon></button>
+            </div>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingRef>
+    <div class="spinner"></div>
+  </ng-template>
+
+  <router-outlet></router-outlet>
+
