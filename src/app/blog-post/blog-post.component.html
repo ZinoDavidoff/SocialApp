@@ -1,6 +1,14 @@
 <div class="sticky-nav"></div>
 <div class="grid">
-  <h1 class="text-center">Snorky's Timeline</h1>
+  <div span='span3'>
+    <div class="span1">
+      <div>
+        <h1 class="text-center">Sn<span></span>rky's Timeline</h1>
+      </div>
+      <div class="span2"></div>
+    </div>
+  </div>
+  
   <div class="searchbar">
       <mat-form-field class="example-full-width" color="primary">
         <mat-icon matPrefix class="icon">search</mat-icon>
@@ -26,10 +34,10 @@
 
   <div class="container-fluid px-5" *ngIf="filteredByDescription | async as posts; else loadingRef">
     <div class="row g-3" >
-      <div class="col-3" *ngFor="let post of posts | sorted">
+      <div class="col-3" [@inOutAnimation]="'in'" *ngFor="let post of posts | sorted | slice:0:max">
         <mat-card routerLink="/blog/post/{{post.id}}" class="h-100">
           <mat-card-header>  
-            <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba2.jpg">
+            <img mat-card-avatar [src]="post?.imgUrl ?? '/assets/img/image-placeholder.png'">
             <mat-card-title>{{post.author}}</mat-card-title>
             <mat-card-subtitle>{{post.category}}</mat-card-subtitle>
           </mat-card-header>
@@ -46,9 +54,9 @@
           </mat-card-subtitle>
           <mat-card-actions class="no-space">
             <div>
-              <button mat-button color="primary" matTooltip="Like this Comment" class="first-child"><mat-icon>thumb_up_alt</mat-icon></button>
-              <button mat-button color="accent" matTooltip="Edit this Comment" (click)='onEditPost(post, $event)'><mat-icon>edit</mat-icon></button>
-              <button mat-button color="warn" matTooltip="Delete this Comment" (click)='onDeletePost(post, $event)'><mat-icon>delete</mat-icon></button>
+              <button mat-button color="primary" matTooltip="Like this Comment" class="first-child" *ngIf="activeUser"><mat-icon>thumb_up_alt</mat-icon></button>
+              <button mat-button color="accent" matTooltip="Edit this Comment" (click)='onEditPost(post, $event)' *ngIf="activeUser?.displayName == post.author"><mat-icon>edit</mat-icon></button>
+              <button mat-button color="warn" matTooltip="Delete this Comment" (click)='onDeletePost(post, $event)' *ngIf="activeUser?.displayName == post.author"><mat-icon>delete</mat-icon></button>
             </div>
             <div>
               <button mat-button color="primary">Write a Comment<mat-icon> comment</mat-icon></button>
@@ -56,6 +64,9 @@
           </mat-card-actions>
         </mat-card>
       </div>
+    </div>
+    <div id="loadMore">
+      <button mat-raised-button color="primary" (click)="loadMore()" *ngIf="posts.length > max">+ Load More</button>
     </div>
   </div>
 

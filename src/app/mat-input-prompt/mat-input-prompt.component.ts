@@ -11,6 +11,7 @@ import { ItemService, Post } from '../item.service';
   styleUrls: ['./mat-input-prompt.component.css'],
 })
 export class MatInputPromptComponent implements OnInit {
+  
   form: FormGroup;
   itemId?: string;
   hasId = false;
@@ -78,6 +79,7 @@ export class MatInputPromptComponent implements OnInit {
   }
 
   createPost() {
+
     let post: Post = {
       author: this.form.get('author').value,
       imgUrl: '',

@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom, map } from 'rxjs';
 import { AuthService, User } from '../auth.service';
@@ -37,20 +37,13 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {  
     this.itemService.getAllPosts()
-    .pipe(map((res) => {
-      const posts = [];
-      for (const key in res) {
-        if (res.hasOwnProperty(key)) {
-          posts.push({ ...res[key], id: key })
-        }
-      }
-      return posts;
-    }))
     .subscribe((data) => {
       this.posts = data;
     })
-    
-    this.afs.collection('users').doc(localStorage.getItem('id')!).valueChanges().subscribe(res =>  {this.activeUser = res}) 
+
+    this.afs.collection('users').doc(localStorage.getItem('id')!).valueChanges().subscribe((res: any) =>  {
+      this.activeUser = res
+    }) 
   }
 
   onPostCreate() {
@@ -65,11 +58,40 @@ export class DashboardComponent implements OnInit {
   }
 
   updateProfile() {
-    this.authService.updateProfile(
+    setTimeout(() => {
+      this.authService.updateProfile(
       this.nameForm.get('name')?.value,
       this.nameForm.get('photo')?.value,
       this.nameForm.get('bio')?.value
     )
+    }, 500);
+    this.itemService.getAllPosts()
+    .subscribe( posts => {
+      for(let post of posts){
+        let name = this.activeUser.displayName
+          let newPost = {
+            author: this.nameForm.get('name')?.value,
+            imgUrl: this.nameForm.get('photo')?.value,
+            category: post.category,
+            description: post.description,
+            createdOn: post.createdOn,
+            likes: post.likes,
+            comments: post.comments,
+            isEdited: post.isEdited,
+            id: post.id
+          }
+        if(post.author === name){
+          for(let i=0; i<this.posts.length; i++){
+          if(this.posts[i].id === post.id){
+          let array1 = this.posts.splice(0, i)
+          let array2 = this.posts.splice(i+1, this.posts.length)
+          let finalArray = array1.concat(array2)
+          finalArray.push(newPost)
+          this.posts = finalArray}}
+          this.itemService.editPost(newPost).subscribe()
+        }
+      }
+    })
     this.toggleForm = !this.toggleForm;
   }
 

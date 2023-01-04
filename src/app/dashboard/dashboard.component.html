@@ -68,7 +68,7 @@
                             <mat-card-header>
                                 <img mat-card-avatar
                                     [src]="activeUser?.photoURL ?? '/assets/img/image-placeholder.png'">
-                                <mat-card-title>{{post.author}}</mat-card-title>
+                                <mat-card-title>{{post.author || activeUser?.displayName}}</mat-card-title>
                                 <mat-card-subtitle>{{post.category}}</mat-card-subtitle>
                             </mat-card-header>
 

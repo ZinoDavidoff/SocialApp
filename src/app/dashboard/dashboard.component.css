@@ -97,6 +97,10 @@ textarea {
   height: 150px;
 }
 
+/* mat-card-content > p {
+  white-space: pre-line;
+} */
+
 .mat-hint {
   color: #00695c !important;
 }
