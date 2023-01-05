@@ -13,9 +13,9 @@ mat-card {
     letter-spacing: 0px;
     border-radius: 20px;
     transition: all linear .2s;
-    display: grid;
-    /* align-content: flex-end; */
-    align-items: end;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 mat-card-title {
     font-family: cursive;
@@ -103,7 +103,6 @@ button {
 
 /* Santa  */
 
-
 span {
     margin: 0 20px;
   }
@@ -121,7 +120,7 @@ span {
     position: absolute;
     content: "";
     background-image: url(https://static.thenounproject.com/png/263119-200.png);
-    /*   filter:
+      /* filter:
       invert(27%)
       sepia(33%)
       saturate(939%)

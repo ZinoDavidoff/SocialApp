@@ -17,6 +17,7 @@ export class MatInputPromptComponent implements OnInit {
   hasId = false;
   activeUser: any;
   editable = true;
+  posts: Post[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -64,31 +65,29 @@ export class MatInputPromptComponent implements OnInit {
   }
 
   editPost() {
-    let post: Post = {
+    let post: Post  = {
       author: this.form.get('author').value,
-      imgUrl: '',
+      imgUrl: this.activeUser.photoURL,
       category: this.form.get('category').value,
       description: this.form.get('description').value,
       createdOn: new Date(),
-      likes: 0,
-      comments: [''],
-      isEdited: true,
+      isEdited: false,
       id: this.itemId
-    }
+      }
     this.itemService.editPost(post).subscribe()
   }
 
   createPost() {
-
     let post: Post = {
       author: this.form.get('author').value,
-      imgUrl: '',
+      imgUrl: this.activeUser.photoURL,
       category: this.form.get('category').value,
       description: this.form.get('description').value,
       createdOn: new Date(),
       likes: 0,
       isEdited: false,
-      comments: ['']
+      comments: [''],
+      id: this.itemId,
     }
     this.itemService.createNewPost(post).subscribe()
   }

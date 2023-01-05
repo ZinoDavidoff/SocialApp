@@ -5,12 +5,12 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
 export interface Post {
     id?: string;
     author: string;
-    imgUrl: string
+    imgUrl: string;
     category: string;
     description: string;
     createdOn: Date;
-    likes: number;
-    comments: string[]; 
+    likes?: number;
+    comments?: string[]; 
     isEdited: boolean;
 }
 
@@ -41,7 +41,7 @@ export class ItemService {
   } 
 
   editPost(value: Post) {
-    return this.http.put('https://myangularproject-90105-default-rtdb.firebaseio.com/posts/'+value.id+'.json', value)
+    return this.http.patch<Partial<Post>>('https://myangularproject-90105-default-rtdb.firebaseio.com/posts/'+value.id+'.json', value)
   }
 
   deletePost(post: Post){

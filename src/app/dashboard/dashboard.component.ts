@@ -33,17 +33,17 @@ export class DashboardComponent implements OnInit {
     private itemService: ItemService,
     private authService: AuthService,
     private afs: AngularFirestore,
-    ) {}
+  ) { }
 
-  ngOnInit(): void {  
+  ngOnInit(): void {
     this.itemService.getAllPosts()
-    .subscribe((data) => {
-      this.posts = data;
-    })
+      .subscribe((data) => {
+        this.posts = data;
+      })
 
-    this.afs.collection('users').doc(localStorage.getItem('id')!).valueChanges().subscribe((res: any) =>  {
+    this.afs.collection('users').doc(localStorage.getItem('id')!).valueChanges().subscribe((res: any) => {
       this.activeUser = res
-    }) 
+    })
   }
 
   onPostCreate() {
@@ -60,54 +60,48 @@ export class DashboardComponent implements OnInit {
   updateProfile() {
     setTimeout(() => {
       this.authService.updateProfile(
-      this.nameForm.get('name')?.value,
-      this.nameForm.get('photo')?.value,
-      this.nameForm.get('bio')?.value
-    )
+        this.nameForm.get('name')?.value,
+        this.nameForm.get('photo')?.value,
+        this.nameForm.get('bio')?.value
+      )
     }, 500);
-    this.itemService.getAllPosts()
-    .subscribe( posts => {
-      for(let post of posts){
-        let name = this.activeUser.displayName
-          let newPost = {
-            author: this.nameForm.get('name')?.value,
-            imgUrl: this.nameForm.get('photo')?.value,
-            category: post.category,
-            description: post.description,
-            createdOn: post.createdOn,
-            likes: post.likes,
-            comments: post.comments,
-            isEdited: post.isEdited,
-            id: post.id
-          }
-        if(post.author === name){
-          for(let i=0; i<this.posts.length; i++){
-          if(this.posts[i].id === post.id){
-          let array1 = this.posts.splice(0, i)
-          let array2 = this.posts.splice(i+1, this.posts.length)
-          let finalArray = array1.concat(array2)
-          finalArray.push(newPost)
-          this.posts = finalArray}}
-          this.itemService.editPost(newPost).subscribe()
-        }
+    for (let post of this.posts) {
+      let name = this.activeUser.displayName
+      let newPost = {
+        author: this.nameForm.get('name')?.value,
+        imgUrl: this.nameForm.get('photo')?.value,
+        category: post.category,
+        description: post.description,
+        createdOn: post.createdOn,
+        likes: post.likes,
+        comments: post.comments,
+        isEdited: post.isEdited,
+        id: post.id
       }
-    })
+      if (post.author === name) {
+        this.itemService.editPost(newPost).subscribe()
+      }
+      this.itemService.getAllPosts()
+        .subscribe((data) => {
+          this.posts = data;
+        })
+    }
     this.toggleForm = !this.toggleForm;
   }
 
   fetchData() {
-    this.afs.collection('users').doc<User>(localStorage.getItem('id')).get().subscribe((res:any) => {     
+    this.afs.collection('users').doc<User>(localStorage.getItem('id')).get().subscribe((res: any) => {
       this.nameForm.get('name')?.setValue(res.data()?.displayName),
-      this.nameForm.get('photo')?.setValue(res.data()?.photoURL),
-      this.nameForm.get('bio')?.setValue(res.data()?.bio)
+        this.nameForm.get('photo')?.setValue(res.data()?.photoURL),
+        this.nameForm.get('bio')?.setValue(res.data()?.bio)
     })
-    
+
   }
 
   asyncValidator() {
     return new Promise(resolve => {
       this.check_displayName().then(snapshot => {
-        if(snapshot.docs.length > 0 && this.activeUser.displayName !== this.nameForm.get('name')?.value){
+        if (snapshot.docs.length > 0 && this.activeUser.displayName !== this.nameForm.get('name')?.value) {
           resolve({
             "displayNameTaken": true
           });
