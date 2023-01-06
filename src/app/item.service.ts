@@ -9,9 +9,10 @@ export interface Post {
     category: string;
     description: string;
     createdOn: Date;
-    likes: {displayName: string, numberOfLikes: number}[];
+    likes: {displayName: string}[];
     comments: string[]; 
     isEdited: boolean;
+    toggleLike?: boolean;
 }
 
 @Injectable({
@@ -52,7 +53,7 @@ export class ItemService {
     return this.http.get('https://myangularproject-90105-default-rtdb.firebaseio.com/posts/'+id+'.json')
   }
 
-  likePost(id: string, likes: {displayName: string, numberOfLikes: number}[]){
+  likePost(id: string, likes: {displayName: string}[]){
     return this.http.patch("https://myangularproject-90105-default-rtdb.firebaseio.com/posts/"+id+".json", {'likes': likes})
   }
 

@@ -34,7 +34,7 @@
 
   <div class="container-fluid px-5" *ngIf="filteredByDescription | async as posts; else loadingRef">
     <div class="row g-3" >
-      <div class="col-3" [@inOutAnimation]="'in'" *ngFor="let post of posts | sorted | slice:0:max">
+      <div class="col-3" [@inOutAnimation]="'in'" *ngFor="let post of posts | sorted | slice:0:max index as i">
         <mat-card routerLink="/blog/post/{{post.id}}" class="h-100">
           <mat-card-header>  
             <img mat-card-avatar [src]="post.imgUrl ?? '/assets/img/image-placeholder.png'">
@@ -54,10 +54,10 @@
           </mat-card-subtitle>
           <mat-card-actions class="no-space">
             <div>
-              <span class="numberLikes" *ngIf="activeUser">{{numberOfLikes}}</span>
-              <button mat-button color="primary" matTooltip="Like this Comment" class="first-child" *ngIf="activeUser">     
-                <mat-icon fontSet="material-icons-outlined" *ngIf="!toggleLikeButton" (click)='likePost(numberOfLikes, post, $event)'>thumb_up_alt</mat-icon>
-                <mat-icon *ngIf="toggleLikeButton" (click)='likePost(numberOfLikes, post, $event)'>thumb_up_alt</mat-icon>
+              <span class="numberLikes" *ngIf="activeUser && post.likes?.length !== 0">{{post.likes?.length}}</span>
+              <button mat-button color="primary" matTooltip="Like this Comment" class="first-child" *ngIf="activeUser" (click)='likePost(post, $event)'>     
+                <mat-icon *ngIf="post.likes?.includes(activeUser.displayName)"  fontSet="material-icons-outlined">thumb_up_alt</mat-icon>
+                <mat-icon *ngIf="!post.likes?.includes(activeUser.displayName)">thumb_up_alt</mat-icon>
               </button>
               <button mat-button color="accent" matTooltip="Edit this Comment" (click)='onEditPost(post, $event)' *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>edit</mat-icon></button>
               <button mat-button color="warn" matTooltip="Delete this Comment" (click)='onDeletePost(post, $event)' *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>delete</mat-icon></button>

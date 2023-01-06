@@ -72,7 +72,7 @@ export class MatInputPromptComponent implements OnInit {
       description: this.form.get('description').value,
       createdOn: new Date(),
       likes: [],
-      isEdited: false,
+      isEdited: true,
       comments: [],
       id: this.itemId
       }
@@ -90,6 +90,7 @@ export class MatInputPromptComponent implements OnInit {
       isEdited: false,
       comments: [],
       id: this.itemId,
+      toggleLike: false
     }
     this.itemService.createNewPost(post).subscribe()
   }

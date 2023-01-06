@@ -74,17 +74,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class BlogPostComponent implements OnInit {
 
-  numberOfLikes: number = 0;
   max: number = 8;
 
   textSearch: FormControl = new FormControl('');
   categories: FormControl = new FormControl('Description');
   posts: Post[] = [];
-  allPost: Post | undefined;
 
   dataFromDialog: any;
   activeUser: any;
-  toggleLikeButton: boolean = false;
 
   constructor(
     private route: Router,
@@ -171,31 +168,29 @@ onEditPost(post: Post, e: Event) {
   e.stopPropagation();
 }
 
-  likePost(numberOfLikes: number, post: Post, e: Event) {
-    let replace = false;
-    this.numberOfLikes = 0;
-    if (post.likes) {
-      for (let i = 0; i < post.likes.length; i++) {
-        if (post.author === this.activeUser.displayName) {
-          post.likes[i] = { displayName: this.activeUser.displayName, numberOfLikes: numberOfLikes}
-          this.itemService.likePost(post.id, this.allPost.likes).subscribe()
-          replace = true;
+  likePost(post: Post, e: Event) {
+    let exists = false;
+    if(post.likes){
+      for(let like of post.likes) {
+        if(like.displayName === this.activeUser.displayName) {
+          this.itemService.likePost(post.id, post.likes).subscribe();
+          exists = true;    
+          let index = post.likes.map(p => p.displayName).indexOf(this.activeUser.displayName);         
+          if (index !== -1) {
+            post.likes?.splice(index, 1);
+            this.itemService.likePost(post.id, post.likes).subscribe();
+          }
         }
-        this.numberOfLikes = this.numberOfLikes + post.likes[i].numberOfLikes;
-      }
-      if (!replace) {
-        post.likes.push({ displayName: this.activeUser.displayName, numberOfLikes: numberOfLikes })
-        this.itemService.likePost(post.id, post.likes).subscribe()
+      } 
+      if (!exists) {
+        post.likes.push({displayName: this.activeUser.displayName})
+        this.itemService.likePost(post.id, post.likes).subscribe();
       }
     } else {
-      this.itemService.likePost(
-        post.id,
-        [{ displayName: this.activeUser.displayName, numberOfLikes: numberOfLikes }]
-      ).subscribe()
-      this.numberOfLikes = numberOfLikes;
+        this.itemService.likePost(post.id, [{displayName: this.activeUser.displayName}]).subscribe();
     }
-
     e.stopPropagation();
   }
+  
 }
 
