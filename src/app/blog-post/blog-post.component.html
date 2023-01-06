@@ -45,7 +45,7 @@
           <mat-card-content>
             <p>
               {{post.description | slice: 0 : 200}}...
-              <a role="button" style="color: #00695c; text-decoration: underline;">Read More</a>
+              <a role="button" style="color: #00695c; text-decoration: underline;" *ngIf="post.description.length > 200">Read More</a>
             </p>
           </mat-card-content>
           <mat-card-subtitle class="right">
@@ -54,12 +54,16 @@
           </mat-card-subtitle>
           <mat-card-actions class="no-space">
             <div>
-              <button mat-button color="primary" matTooltip="Like this Comment" class="first-child" *ngIf="activeUser"><mat-icon>thumb_up_alt</mat-icon></button>
-              <button mat-button color="accent" matTooltip="Edit this Comment" (click)='onEditPost(post, $event)' *ngIf="activeUser?.displayName == post.author"><mat-icon>edit</mat-icon></button>
-              <button mat-button color="warn" matTooltip="Delete this Comment" (click)='onDeletePost(post, $event)' *ngIf="activeUser?.displayName == post.author"><mat-icon>delete</mat-icon></button>
+              <span class="numberLikes" *ngIf="activeUser">{{numberOfLikes}}</span>
+              <button mat-button color="primary" matTooltip="Like this Comment" class="first-child" *ngIf="activeUser">     
+                <mat-icon fontSet="material-icons-outlined" *ngIf="!toggleLikeButton" (click)='likePost(numberOfLikes, post, $event)'>thumb_up_alt</mat-icon>
+                <mat-icon *ngIf="toggleLikeButton" (click)='likePost(numberOfLikes, post, $event)'>thumb_up_alt</mat-icon>
+              </button>
+              <button mat-button color="accent" matTooltip="Edit this Comment" (click)='onEditPost(post, $event)' *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>edit</mat-icon></button>
+              <button mat-button color="warn" matTooltip="Delete this Comment" (click)='onDeletePost(post, $event)' *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>delete</mat-icon></button>
             </div>
             <div>
-              <button mat-button color="primary">Write a Comment<mat-icon> comment</mat-icon></button>
+              <button mat-button color="primary" *ngIf="activeUser" >Write a Comment<mat-icon> comment</mat-icon></button>
             </div>
           </mat-card-actions>
         </mat-card>

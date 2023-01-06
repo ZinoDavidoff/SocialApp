@@ -18,6 +18,7 @@ export class DashboardComponent implements OnInit {
   dataFromDialog: any;
   toggleForm: boolean = false;
   state: boolean = true;
+  userRole: 'user';
   posts: Post[] = [];
 
   nameForm = new FormGroup({
@@ -62,7 +63,8 @@ export class DashboardComponent implements OnInit {
       this.authService.updateProfile(
         this.nameForm.get('name')?.value,
         this.nameForm.get('photo')?.value,
-        this.nameForm.get('bio')?.value
+        this.nameForm.get('bio')?.value,
+        this.userRole
       )
     }, 500);
     for (let post of this.posts) {

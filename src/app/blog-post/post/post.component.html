@@ -19,11 +19,11 @@
     <div>
       <button matTooltip="Like this Post" mat-button color="primary"
         class="first-child"><mat-icon>thumb_up_alt</mat-icon></button>
-      <button matTooltip="Edit this Post" mat-button color="accent" *ngIf="activeUser?.displayName == post.author"><mat-icon>edit</mat-icon></button>
-      <button matTooltip="Delete this Post" mat-button color="warn" *ngIf="activeUser?.displayName == post.author"><mat-icon>delete</mat-icon></button>
+      <button matTooltip="Edit this Post" mat-button color="accent" *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'" ><mat-icon>edit</mat-icon></button>
+      <button matTooltip="Delete this Post" mat-button color="warn" *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>delete</mat-icon></button>
     </div>
     <div>
-      <button mat-button color="primary" (click)="isDisplayed = !isDisplayed;">Write a Comment<mat-icon>
+      <button mat-button color="primary" (click)="isDisplayed = !isDisplayed;" >Write a Comment<mat-icon>
           comment</mat-icon></button>
     </div>
   </mat-card-actions>

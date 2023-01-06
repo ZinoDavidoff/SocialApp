@@ -9,8 +9,8 @@ export interface Post {
     category: string;
     description: string;
     createdOn: Date;
-    likes?: number;
-    comments?: string[]; 
+    likes: {displayName: string, numberOfLikes: number}[];
+    comments: string[]; 
     isEdited: boolean;
 }
 
@@ -41,7 +41,7 @@ export class ItemService {
   } 
 
   editPost(value: Post) {
-    return this.http.patch<Partial<Post>>('https://myangularproject-90105-default-rtdb.firebaseio.com/posts/'+value.id+'.json', value)
+    return this.http.put<Partial<Post>>('https://myangularproject-90105-default-rtdb.firebaseio.com/posts/'+value.id+'.json', value)
   }
 
   deletePost(post: Post){
@@ -50,6 +50,10 @@ export class ItemService {
 
   getPostById(id: string): Observable<any> {
     return this.http.get('https://myangularproject-90105-default-rtdb.firebaseio.com/posts/'+id+'.json')
+  }
+
+  likePost(id: string, likes: {displayName: string, numberOfLikes: number}[]){
+    return this.http.patch("https://myangularproject-90105-default-rtdb.firebaseio.com/posts/"+id+".json", {'likes': likes})
   }
 
 }

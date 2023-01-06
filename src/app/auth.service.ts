@@ -9,6 +9,7 @@ export interface User {
   displayName?: string;
   photoURL?: string;
   bio?: string;
+  role?: string;
 }
 
 @Injectable({
@@ -64,11 +65,12 @@ export class AuthService {
       
     }
 
- updateProfile(displayName: string, photoURL: string, bio: string) {
+ updateProfile(displayName: string, photoURL: string, bio: string, role: string) {
     this.afs.collection('users').doc(localStorage.getItem('id')!).update({
       displayName: displayName,
       photoURL: photoURL || '', 
-      bio: bio || ''       
+      bio: bio || '', 
+      role: role || ''
     })
   }
 

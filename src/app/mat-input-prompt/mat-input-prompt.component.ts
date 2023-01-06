@@ -71,7 +71,9 @@ export class MatInputPromptComponent implements OnInit {
       category: this.form.get('category').value,
       description: this.form.get('description').value,
       createdOn: new Date(),
+      likes: [],
       isEdited: false,
+      comments: [],
       id: this.itemId
       }
     this.itemService.editPost(post).subscribe()
@@ -84,9 +86,9 @@ export class MatInputPromptComponent implements OnInit {
       category: this.form.get('category').value,
       description: this.form.get('description').value,
       createdOn: new Date(),
-      likes: 0,
+      likes: [],
       isEdited: false,
-      comments: [''],
+      comments: [],
       id: this.itemId,
     }
     this.itemService.createNewPost(post).subscribe()

@@ -75,7 +75,7 @@
                             <mat-card-content>
                                 <p>
                                     {{post.description | slice:0:350}}...
-                                    <a role="button" style="color: #00695c; text-decoration: underline;">Read More</a>
+                                    <a role="button" style="color: #00695c; text-decoration: underline;" *ngIf="post.description.length > 350">Read More</a>
                                 </p>
                             </mat-card-content>
                             <mat-card-subtitle class="right">

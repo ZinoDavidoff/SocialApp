@@ -4,10 +4,11 @@ import { debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { ItemService, Post } from '../item.service';
 import { MatInputPromptComponent } from '../mat-input-prompt/mat-input-prompt.component';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-blog-post',
@@ -73,16 +74,25 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 export class BlogPostComponent implements OnInit {
 
+  numberOfLikes: number = 0;
   max: number = 8;
 
   textSearch: FormControl = new FormControl('');
   categories: FormControl = new FormControl('Description');
   posts: Post[] = [];
+  allPost: Post | undefined;
 
   dataFromDialog: any;
   activeUser: any;
+  toggleLikeButton: boolean = false;
 
-  constructor(private itemService: ItemService, private dialog: MatDialog, private auth: AuthService, private afs: AngularFirestore,) { }
+  constructor(
+    private route: Router,
+    private router: ActivatedRoute,
+    private itemService: ItemService,
+    private dialog: MatDialog,
+    private auth: AuthService,
+    private afs: AngularFirestore) { }
 
   ngOnInit(): void {
 
@@ -160,5 +170,32 @@ onEditPost(post: Post, e: Event) {
 
   e.stopPropagation();
 }
+
+  likePost(numberOfLikes: number, post: Post, e: Event) {
+    let replace = false;
+    this.numberOfLikes = 0;
+    if (post.likes) {
+      for (let i = 0; i < post.likes.length; i++) {
+        if (post.author === this.activeUser.displayName) {
+          post.likes[i] = { displayName: this.activeUser.displayName, numberOfLikes: numberOfLikes}
+          this.itemService.likePost(post.id, this.allPost.likes).subscribe()
+          replace = true;
+        }
+        this.numberOfLikes = this.numberOfLikes + post.likes[i].numberOfLikes;
+      }
+      if (!replace) {
+        post.likes.push({ displayName: this.activeUser.displayName, numberOfLikes: numberOfLikes })
+        this.itemService.likePost(post.id, post.likes).subscribe()
+      }
+    } else {
+      this.itemService.likePost(
+        post.id,
+        [{ displayName: this.activeUser.displayName, numberOfLikes: numberOfLikes }]
+      ).subscribe()
+      this.numberOfLikes = numberOfLikes;
+    }
+
+    e.stopPropagation();
+  }
 }
 
