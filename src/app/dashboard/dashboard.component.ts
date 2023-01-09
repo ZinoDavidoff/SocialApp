@@ -1,9 +1,9 @@
 
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { firstValueFrom, map } from 'rxjs';
+import { firstValueFrom, map, Observable, Subscription } from 'rxjs';
 import { AuthService, User } from '../auth.service';
 import { ItemService, Post } from '../item.service';
 import { MatInputPromptComponent } from '../mat-input-prompt/mat-input-prompt.component';
@@ -28,12 +28,13 @@ export class DashboardComponent implements OnInit {
   })
 
   activeUser: any;
+  postime$: Subscription;
 
   constructor(
     private dialog: MatDialog,
     private itemService: ItemService,
     private authService: AuthService,
-    private afs: AngularFirestore,
+    private afs: AngularFirestore
   ) { }
 
   ngOnInit(): void {
@@ -128,7 +129,6 @@ export class DashboardComponent implements OnInit {
       width: '700px',
       height: '450px',
     });
-    this.itemService.itemToEdit.next(post)
 
     dialogRef.afterClosed().subscribe((data) => {
       this.dataFromDialog = data.form;

@@ -16,6 +16,7 @@ mat-card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    min-height: 250px;
 }
 mat-card-title {
     font-family: cursive;
@@ -27,8 +28,12 @@ mat-card:hover{
 mat-card-actions {
     display: flex;
     justify-content: space-evenly;
-
+    margin-bottom: -8px;
 }
+.cutoff-text {
+    mask-image: linear-gradient(180deg, black 60%, transparent);
+}
+
 h1 {
     color: #00695c;
     font-size: xx-large;
@@ -70,11 +75,11 @@ mat-label, mat-select, mat-option {
 
 .numberLikes {
     position: absolute;
-    left: 8%;
-    bottom: 11%;
+    left: 0%;
+    bottom: 45%;
     margin: 0;
     color: #00695c;
-    font-family: fantasy;
+    font-family: 'Droid Serif';
 }
 .first-child {
     margin-right: 8px !important;

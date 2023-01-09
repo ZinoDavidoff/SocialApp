@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { concatMap, debounceTime, delay, map, startWith, switchMap, take } from 'rxjs/operators';
 import { ItemService, Post } from '../item.service';
 import { MatInputPromptComponent } from '../mat-input-prompt/mat-input-prompt.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -85,6 +85,7 @@ export class BlogPostComponent implements OnInit {
 
   constructor(
     private route: Router,
+    private ref: ChangeDetectorRef,
     private router: ActivatedRoute,
     private itemService: ItemService,
     private dialog: MatDialog,
@@ -96,101 +97,122 @@ export class BlogPostComponent implements OnInit {
     this.itemService.getAllPosts()
       .subscribe((data) => {
         this.posts = data;
+        for (let post of this.posts) {
+          post.toggleButtonLike = true;
+          setTimeout(() => {
+            if (post.likes) {
+              for (let like of post.likes) {
+                if (like.displayName === this.activeUser.displayName) {
+                  post.toggleButtonLike = false;
+                }
+              }
+            } else {
+              post.toggleButtonLike = true;
+            }
+          }, 1000);
+        }
       })
 
     this.afs.collection('users')
       .doc(localStorage.getItem('id')!)
       .valueChanges()
-      .subscribe(res => { this.activeUser = res })
+      .subscribe(res => {
+        this.activeUser = res;
+      })
 
-}
+  }
 
-loadMore() {
-  this.max = this.max + 8;
-}
+  loadMore() {
+    this.max = this.max + 8;
+  }
 
-filteredByDescription: Observable<Post[]> = this.textSearch?.valueChanges.pipe(
-  startWith(''),
-  debounceTime(800),
-  switchMap(searchValue => {
+  filteredByDescription: Observable<Post[]> = this.textSearch?.valueChanges.pipe(
+    startWith(''),
+    debounceTime(800),
+    switchMap(searchValue => {
 
-    if (this.categories.value! === 'Description') {
-      return of(this.posts)
-        .pipe(
-          map(post => {
-            return post.filter(
-              post => post.description.toLowerCase().includes(searchValue))
-          }))
-    }
-    else if (this.categories.value! === 'Author') {
-      return of(this.posts)
-        .pipe(
-          map(post => {
-            return post.filter(
-              post => post.author.toLowerCase().includes(searchValue))
-          }))
-    }
-    else if (this.categories.value! === 'Categories') {
-      return of(this.posts)
-        .pipe(
-          map(post => {
-            return post.filter(
-              post => post.category.toLowerCase().includes(searchValue))
-          }))
-    } else
-      return of(this.posts)
-        .pipe(
-          map(post => {
-            return post.filter(
-              post => post.description.toLowerCase().includes(searchValue))
-          }))
-  }))
+      if (this.categories.value! === 'Description') {
+        return of(this.posts)
+          .pipe(
+            map(post => {
+              return post.filter(
+                post => post.description.toLowerCase().includes(searchValue))
+            }))
+      }
+      else if (this.categories.value! === 'Author') {
+        return of(this.posts)
+          .pipe(
+            map(post => {
+              return post.filter(
+                post => post.author.toLowerCase().includes(searchValue))
+            }))
+      }
+      else if (this.categories.value! === 'Categories') {
+        return of(this.posts)
+          .pipe(
+            map(post => {
+              return post.filter(
+                post => post.category.toLowerCase().includes(searchValue))
+            }))
+      } else
+        return of(this.posts)
+          .pipe(
+            map(post => {
+              return post.filter(
+                post => post.description.toLowerCase().includes(searchValue))
+            }))
+    }))
 
-onDeletePost(post: Post, e: Event) {
-  this.itemService.deletePost(post).subscribe();
-  e.stopPropagation();
-}
+  onDeletePost(post: Post, e: Event) {
+    this.itemService.deletePost(post).subscribe();
+    e.stopPropagation();
+  }
 
-onEditPost(post: Post, e: Event) {
+  onEditPost(post: Post, e: Event) {
 
-  const dialogRef = this.dialog.open(MatInputPromptComponent, {
-    width: '700px',
-    height: '450px',
-  });
+    const dialogRef = this.dialog.open(MatInputPromptComponent, {
+      width: '700px',
+      height: '450px',
+    });
 
-  this.itemService.itemToEdit.next(post)
+    dialogRef.afterClosed().subscribe((data) => {
+      this.dataFromDialog = data.form;
+      post.isEdited = true;
+    });
 
-  dialogRef.afterClosed().subscribe((data) => {
-    this.dataFromDialog = data.form;
-    post.isEdited = true;
-  });
-
-  e.stopPropagation();
-}
+    e.stopPropagation();
+  }
 
   likePost(post: Post, e: Event) {
     let exists = false;
-    if(post.likes){
-      for(let like of post.likes) {
-        if(like.displayName === this.activeUser.displayName) {
+    if (post.likes) {
+      for (let like of post.likes) {
+        if (like.displayName === this.activeUser.displayName) {
           this.itemService.likePost(post.id, post.likes).subscribe();
-          exists = true;    
-          let index = post.likes.map(p => p.displayName).indexOf(this.activeUser.displayName);         
-          if (index !== -1) {
-            post.likes?.splice(index, 1);
-            this.itemService.likePost(post.id, post.likes).subscribe();
-          }
+          exists = true;
+          setTimeout(() => {
+          post.toggleButtonLike = true;
+          let index = post.likes.map(p => p.displayName).indexOf(this.activeUser.displayName);  
+            if (index !== -1) {
+              post.likes?.splice(index, 1);
+              this.itemService.likePost(post.id, post.likes).subscribe();
+            }
+          }, 800);
         }
-      } 
-      if (!exists) {
-        post.likes.push({displayName: this.activeUser.displayName})
-        this.itemService.likePost(post.id, post.likes).subscribe();
       }
+      setTimeout(() => {
+        if (!exists) {
+          post.likes.push({ displayName: this.activeUser.displayName })
+          this.itemService.likePost(post.id, post.likes).subscribe();
+          post.toggleButtonLike = false;
+        }
+      }, 800);
     } else {
-        this.itemService.likePost(post.id, [{displayName: this.activeUser.displayName}]).subscribe();
+      this.itemService.likePost(post.id, [{ displayName: this.activeUser.displayName }]).subscribe();
     }
     e.stopPropagation();
   }
-  
+
+
 }
 

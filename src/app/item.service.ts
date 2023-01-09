@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject, tap } from 'rxjs';
 
 export interface Post {
     id?: string;
@@ -10,9 +10,9 @@ export interface Post {
     description: string;
     createdOn: Date;
     likes: {displayName: string}[];
-    comments: string[]; 
+    comments: {displayName: string, photoUrl: string, desc: string, createdOn: Date}[]; 
     isEdited: boolean;
-    toggleLike?: boolean;
+    toggleButtonLike?: boolean;
 }
 
 @Injectable({
@@ -38,11 +38,22 @@ export class ItemService {
         }
       }
       return posts;
-    }))
+    })
+    )
   } 
 
   editPost(value: Post) {
     return this.http.put<Partial<Post>>('https://myangularproject-90105-default-rtdb.firebaseio.com/posts/'+value.id+'.json', value)
+  }
+
+  patchPost(id: string, category: string, description: string, createdOn: Date, isEdited: boolean) {
+    return this.http.patch("https://myangularproject-90105-default-rtdb.firebaseio.com/posts/"+id+".json", 
+    {
+      'category': category,
+      'description' : description,
+      'createdOn': createdOn,
+      'isEdited' : isEdited
+    })
   }
 
   deletePost(post: Post){
@@ -55,6 +66,10 @@ export class ItemService {
 
   likePost(id: string, likes: {displayName: string}[]){
     return this.http.patch("https://myangularproject-90105-default-rtdb.firebaseio.com/posts/"+id+".json", {'likes': likes})
+  }
+
+  addComment(id: string, comments: {displayName: string, photoUrl: string, desc: string, createdOn: Date}[]){
+    return this.http.patch("https://myangularproject-90105-default-rtdb.firebaseio.com/posts/"+id+".json", {'comments': comments})
   }
 
 }

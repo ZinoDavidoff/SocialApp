@@ -34,30 +34,38 @@
 
   <div class="container-fluid px-5" *ngIf="filteredByDescription | async as posts; else loadingRef">
     <div class="row g-3" >
-      <div class="col-3" [@inOutAnimation]="'in'" *ngFor="let post of posts | sorted | slice:0:max index as i">
+      <div class="col-3" [@inOutAnimation]="'in'" *ngFor="let post of posts | sorted | slice:0:max">
         <mat-card routerLink="/blog/post/{{post.id}}" class="h-100">
-          <mat-card-header>  
-            <img mat-card-avatar [src]="post.imgUrl ?? '/assets/img/image-placeholder.png'">
-            <mat-card-title>{{post.author}}</mat-card-title>
-            <mat-card-subtitle>{{post.category}}</mat-card-subtitle>
-          </mat-card-header>
-        
-          <mat-card-content>
-            <p>
-              {{post.description | slice: 0 : 200}}...
-              <a role="button" style="color: #00695c; text-decoration: underline;" *ngIf="post.description.length > 200">Read More</a>
-            </p>
-          </mat-card-content>
+          <div>
+            <mat-card-header>
+              <img mat-card-avatar [src]="post.imgUrl ?? '/assets/img/image-placeholder.png'">
+              <mat-card-title>{{post.author}}</mat-card-title>
+              <mat-card-subtitle>{{post.category}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p [class.cutoff-text]="post.description.length > 250">
+                {{post.description | slice: 0 : 250}}
+              </p>
+            </mat-card-content>
+          </div>
+          <div>
           <mat-card-subtitle class="right">
             <small *ngIf="post.isEdited">Edited: </small>
             {{post.createdOn | date: 'dd MMM, yyyy h:mm a'}}
           </mat-card-subtitle>
           <mat-card-actions class="no-space">
             <div>
-              <span class="numberLikes" *ngIf="activeUser && post.likes?.length !== 0">{{post.likes?.length}}</span>
+              
               <button mat-button color="primary" matTooltip="Like this Comment" class="first-child" *ngIf="activeUser" (click)='likePost(post, $event)'>     
-                <mat-icon *ngIf="post.likes?.includes(activeUser.displayName)"  fontSet="material-icons-outlined">thumb_up_alt</mat-icon>
-                <mat-icon *ngIf="!post.likes?.includes(activeUser.displayName)">thumb_up_alt</mat-icon>
+                <span class="numberLikes" *ngIf="activeUser && post.likes?.length !== 0">{{post.likes?.length}}</span>
+                <mat-icon 
+                  [ngClass]=
+                  "{'material-icons-outlined': post?.toggleButtonLike == true,
+                  '' : post?.toggleButtonLike == false }">
+                  thumb_up_alt
+                </mat-icon>
+               <!-- <mat-icon *ngIf="post?.toggleButtonLike" fontSet="material-icons-outlined" >thumb_up_alt</mat-icon>
+               <mat-icon *ngIf="!post?.toggleButtonLike">thumb_up_alt</mat-icon> -->
               </button>
               <button mat-button color="accent" matTooltip="Edit this Comment" (click)='onEditPost(post, $event)' *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>edit</mat-icon></button>
               <button mat-button color="warn" matTooltip="Delete this Comment" (click)='onDeletePost(post, $event)' *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>delete</mat-icon></button>
@@ -66,6 +74,7 @@
               <button mat-button color="primary" *ngIf="activeUser" >Write a Comment<mat-icon> comment</mat-icon></button>
             </div>
           </mat-card-actions>
+        </div>
         </mat-card>
       </div>
     </div>
