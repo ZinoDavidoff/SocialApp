@@ -28,7 +28,6 @@ export class DashboardComponent implements OnInit {
   })
 
   activeUser: any;
-  postime$: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -37,11 +36,55 @@ export class DashboardComponent implements OnInit {
     private afs: AngularFirestore
   ) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void { 
     this.itemService.getAllPosts()
       .subscribe((data) => {
         this.posts = data;
+        for (let post of this.posts) {
+          post.toggleButtonLike = true;
+          setTimeout(() => {
+            if (post.likes) {
+              for (let like of post.likes) {
+                if (like.displayName === this.activeUser.displayName) {
+                  post.toggleButtonLike = false;
+                }
+              }
+            } else {
+              post.toggleButtonLike = true;
+            }
+          }, 1000);
+        }
       })
+
+    this.itemService.post$.subscribe((post: Post) => {
+      for (let pos of this.posts) {
+        if (pos.id === post.id) {
+          let index = this.posts.findIndex(p => p.id === pos.id)
+          this.posts[index] = post;
+        } else {
+          this.posts.push(post);
+        }
+      }
+
+      this.itemService.getAllPosts().subscribe(
+        (post) => {
+          this.posts = post
+          for (let post of this.posts) {
+            post.toggleButtonLike = true;
+            setTimeout(() => {
+              if (post.likes) {
+                for (let like of post.likes) {
+                  if (like.displayName === this.activeUser.displayName) {
+                    post.toggleButtonLike = false;
+                  }
+                }
+              } else {
+                post.toggleButtonLike = true;
+              }
+            }, 1000);
+          }
+        })
+    })
 
     this.afs.collection('users').doc(localStorage.getItem('id')!).valueChanges().subscribe((res: any) => {
       this.activeUser = res
@@ -54,6 +97,7 @@ export class DashboardComponent implements OnInit {
       height: '450px',
     });
 
+    
     dialogRef.afterClosed().subscribe((data) => {
       this.dataFromDialog = data.form;
     });
@@ -98,7 +142,11 @@ export class DashboardComponent implements OnInit {
         this.nameForm.get('photo')?.setValue(res.data()?.photoURL),
         this.nameForm.get('bio')?.setValue(res.data()?.bio)
     })
+  }
 
+  fetchPost(){
+    this.itemService.getAllPosts()
+    .subscribe(data => this.posts = data)
   }
 
   asyncValidator() {
@@ -120,7 +168,11 @@ export class DashboardComponent implements OnInit {
   }
 
   onDeletePost(post: Post, e: Event) {
-    this.itemService.deletePost(post).subscribe();
+    this.itemService.deletePost(post).subscribe(
+      () => {
+        this.fetchPost();
+      }
+    );
     e.stopPropagation();
   }
 
@@ -130,11 +182,45 @@ export class DashboardComponent implements OnInit {
       height: '450px',
     });
 
+    this.itemService.itemToEdit.next(post)
+
     dialogRef.afterClosed().subscribe((data) => {
       this.dataFromDialog = data.form;
       post.isEdited = true;
     });
 
+    e.stopPropagation();
+  }
+
+  likePost(post: Post, e: Event) {
+    let exists = false;
+    if (post.likes) {
+      for (let like of post.likes) {
+        if (like.displayName === this.activeUser.displayName) {
+          this.itemService.likePost(post.id, post.likes).subscribe();
+          exists = true;
+          setTimeout(() => {
+          post.toggleButtonLike = true;
+          let index = post.likes.map(p => p.displayName).indexOf(this.activeUser.displayName);  
+            if (index !== -1) {
+              post.likes?.splice(index, 1);
+              this.itemService.likePost(post.id, post.likes).subscribe();
+            }
+          }, 800);
+        }
+      }
+      setTimeout(() => {
+        if (!exists) {
+          post.likes.push({ displayName: this.activeUser.displayName })
+          this.itemService.likePost(post.id, post.likes).subscribe();
+          post.toggleButtonLike = false;
+        }
+      }, 800);
+    } else {
+      if(this.activeUser) {
+        this.itemService.likePost(post.id, [{ displayName: this.activeUser.displayName }]).subscribe();
+    } 
+  }
     e.stopPropagation();
   }
 

@@ -126,42 +126,43 @@ export class BlogPostComponent implements OnInit {
     this.max = this.max + 8;
   }
 
-  filteredByDescription: Observable<Post[]> = this.textSearch?.valueChanges.pipe(
-    startWith(''),
-    debounceTime(800),
-    switchMap(searchValue => {
-
-      if (this.categories.value! === 'Description') {
-        return of(this.posts)
-          .pipe(
-            map(post => {
-              return post.filter(
-                post => post.description.toLowerCase().includes(searchValue))
-            }))
-      }
-      else if (this.categories.value! === 'Author') {
-        return of(this.posts)
-          .pipe(
-            map(post => {
-              return post.filter(
-                post => post.author.toLowerCase().includes(searchValue))
-            }))
-      }
-      else if (this.categories.value! === 'Categories') {
-        return of(this.posts)
-          .pipe(
-            map(post => {
-              return post.filter(
-                post => post.category.toLowerCase().includes(searchValue))
-            }))
-      } else
-        return of(this.posts)
-          .pipe(
-            map(post => {
-              return post.filter(
-                post => post.description.toLowerCase().includes(searchValue))
-            }))
-    }))
+  // filteredByDescription: Observable<Post[]> = this.textSearch?.valueChanges.pipe(
+  //   startWith(''),
+  //   debounceTime(800),
+  //   switchMap(searchValue => {
+  
+  //     if (this.categories.value! === 'Description') {
+  //       return of(this.posts)
+  //         .pipe(
+  //           map(post => {
+  //             return post.filter(
+  //               post => post.description?.toLowerCase().includes(searchValue))
+  //           }))
+  //     }
+  //     else if (this.categories.value! === 'Author') {
+  //       return of(this.posts)
+  //         .pipe(
+  //           map(post => {
+  //             return post.filter(
+  //               post => post.author?.toLowerCase().includes(searchValue))
+  //           }))
+  //     }
+  //     else if (this.categories.value! === 'Categories') {
+  //       return of(this.posts)
+  //         .pipe(
+  //           map(post => {
+  //             return post.filter(
+  //                post => post.category?.toLowerCase().includes(searchValue)
+  //                  )
+  //           }))
+  //     } else
+  //       return of(this.posts)
+  //         .pipe(
+  //           map(post => {
+  //             return post.filter(
+  //               post => post.description?.toLowerCase().includes(searchValue))
+  //           }))
+  //   }))
 
   onDeletePost(post: Post, e: Event) {
     this.itemService.deletePost(post).subscribe();
@@ -174,6 +175,8 @@ export class BlogPostComponent implements OnInit {
       width: '700px',
       height: '450px',
     });
+
+    this.itemService.itemToEdit.next(post);
 
     dialogRef.afterClosed().subscribe((data) => {
       this.dataFromDialog = data.form;

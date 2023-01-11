@@ -16,7 +16,7 @@ mat-card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 250px;
+    min-height: 200px;
 }
 mat-card-title {
     font-family: cursive;
@@ -31,7 +31,12 @@ mat-card-actions {
     margin-bottom: -8px;
 }
 .cutoff-text {
+    --max-lines: 7;
+    --line-height: 1.4;
+    max-height: calc(var(--max-lines) * 1em *var(--line-height));
+    line-height: var(--line-height);
     mask-image: linear-gradient(180deg, black 60%, transparent);
+    overflow: hidden;
 }
 
 h1 {

@@ -10,6 +10,7 @@ import { HttpClientModule } from '@angular/common/http'
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import {MatTableModule} from '@angular/material/table';
 import { LoginComponent } from './login/login.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -28,6 +29,7 @@ import { NgxMasonryModule } from 'ngx-masonry';
 import { SortedPipe } from './sorted.pipe';
 import { PostComponent } from './blog-post/post/post.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { CategoriesComponent } from './categories/categories.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatInputPromptComponent,
     SortedPipe,
     PostComponent,
+    CategoriesComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +62,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatListModule,
     MatDialogModule,
     MatTooltipModule,
+    MatTableModule,
     AngularFireModule.initializeApp(environment.firebase)
   ],
   providers: [

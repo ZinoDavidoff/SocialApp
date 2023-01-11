@@ -21,6 +21,7 @@ export interface Post {
 export class ItemService {
 
   itemToEdit = new BehaviorSubject<Post>(null);
+  post$ = new Subject<Post | Partial<Post>>();
 
   constructor(private http: HttpClient) { }
 
@@ -46,13 +47,13 @@ export class ItemService {
     return this.http.put<Partial<Post>>('https://myangularproject-90105-default-rtdb.firebaseio.com/posts/'+value.id+'.json', value)
   }
 
-  patchPost(id: string, category: string, description: string, createdOn: Date, isEdited: boolean) {
+  patchPost(id: string, post: Partial<Post>) {
     return this.http.patch("https://myangularproject-90105-default-rtdb.firebaseio.com/posts/"+id+".json", 
     {
-      'category': category,
-      'description' : description,
-      'createdOn': createdOn,
-      'isEdited' : isEdited
+      'category': post.category,
+      'description' : post.description,
+      'createdOn': post.createdOn,
+      'isEdited' : post.isEdited
     })
   }
 
@@ -71,5 +72,13 @@ export class ItemService {
   addComment(id: string, comments: {displayName: string, photoUrl: string, desc: string, createdOn: Date}[]){
     return this.http.patch("https://myangularproject-90105-default-rtdb.firebaseio.com/posts/"+id+".json", {'comments': comments})
   }
+
+  createNewCategories(categories: string[]): Observable<string[]> {
+    return this.http.put<string[]>("https://myangularproject-90105-default-rtdb.firebaseio.com/categories.json", categories)
+  } 
+
+  getCategories(): Observable<string[]> {
+    return this.http.get<string[]>("https://myangularproject-90105-default-rtdb.firebaseio.com/categories.json")
+  } 
 
 }

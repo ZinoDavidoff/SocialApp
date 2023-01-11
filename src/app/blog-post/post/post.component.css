@@ -77,6 +77,15 @@ p {
     text-align: justify;
 }
 
+.numberLikes {
+    position: absolute;
+    left: 0%;
+    bottom: 45%;
+    margin: 0;
+    color: #00695c;
+    font-family: 'Droid Serif';
+  }
+
 .spinner {
     border: 16px solid silver;
     border-top: 16px solid #00695c;

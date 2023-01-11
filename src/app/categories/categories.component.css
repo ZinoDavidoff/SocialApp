@@ -1,0 +1,73 @@
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: white;  
+    border-radius: 20px;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #00695c; 
+    border-radius: 20px;
+  }
+
+.sticky-nav {
+    margin-top: calc(70px + 2rem);
+}
+
+.add-categories {
+    color: white;
+    font-family: cursive;
+    font-weight: bold;
+    margin-left: 3rem;
+}
+
+.mdb-color {
+    background-color: #00695c;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.table {
+    position: relative;
+    font-family: cursive;
+}
+.table-wrap {
+    margin-top: 1rem;
+    margin-left: 2rem;
+    height: 266px;
+    overflow-y: auto;
+    width: 450px;
+    padding-right: 1rem;
+}
+table,
+thead,
+tr,
+tbody,
+th,
+td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+tbody > tr > td {
+    border-bottom: 1px solid white;
+}
+.table>:not(caption)>*>* {
+    padding: 5px 1px;
+}
+.color {
+    background-color: #00695c;
+}
+mat-form-field {
+    margin-left: calc(1rem + 44px);
+}
+mat-label {
+    color: #00695c;
+    font-family: cursive;
+    font-weight: bold;
+}

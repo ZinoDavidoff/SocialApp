@@ -18,8 +18,16 @@
   </mat-card-subtitle>
   <mat-card-actions class="no-space">
     <div>
-      <button matTooltip="Like this Post" mat-button color="primary"
-        class="first-child"><mat-icon>thumb_up_alt</mat-icon></button>
+      <button matTooltip="Like this Post" mat-button color="primary" (click)='likePost(post, $event)'
+        class="first-child">
+        <span class="numberLikes" *ngIf="activeUser && post.likes?.length !== 0">{{post.likes?.length}}</span>
+        <mat-icon 
+          [ngClass]=
+          "{'material-icons-outlined': post?.toggleButtonLike == true,
+          '' : post?.toggleButtonLike == false }">
+          thumb_up_alt
+        </mat-icon>
+      </button>
       <button matTooltip="Edit this Post" mat-button color="accent"
         *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>edit</mat-icon></button>
       <button matTooltip="Delete this Post" mat-button color="warn"
@@ -65,7 +73,7 @@
     <mat-card-actions class="right-align">
       <div class="text-right">
         <button matTooltip="Delete this Comment" mat-button color="warn" (click)="delete(comment)"
-        *ngIf="comment?.displayName === activeUser?.displayName || activeUser?.role === 'admin'">
+        *ngIf="activeUser?.displayName === post.author || comment?.displayName === activeUser?.displayName || activeUser?.role === 'admin'">
           <mat-icon>delete</mat-icon>
         </button>
         <mat-card-subtitle class="right">

@@ -9,7 +9,11 @@
   
         <mat-form-field appearance="standard">
             <mat-label>Category</mat-label>
-            <input matInput placeholder="Enter your name" formControlName="category" />
+            <mat-select formControlName="category">
+              <mat-option *ngFor="let cat of categories" [value]="cat">
+                {{cat}}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
 
         <mat-form-field appearance="standard">
@@ -18,7 +22,6 @@
               matInput
               placeholder="Description"
               formControlName="description"
-
             ></textarea>
           </mat-form-field>
       </form>

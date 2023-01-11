@@ -92,6 +92,19 @@ export class PostComponent implements OnInit {
     this.itemService.getPostById(this.activatedRoute.snapshot.params['id']).pipe(delay(800))
     .subscribe(post => {
       this.post = post;
+        post.toggleButtonLike = true;
+        setTimeout(() => {
+          if (post.likes) {
+            for (let like of post.likes) {
+              if (like.displayName === this.activeUser.displayName) {
+                post.toggleButtonLike = false;
+              }
+            }
+          } else {
+            post.toggleButtonLike = true;
+          }
+        }, 1000);
+    
     })
 
     this.afs.collection('users')
@@ -100,6 +113,35 @@ export class PostComponent implements OnInit {
     .subscribe(res => { this.activeUser = res })
   }
 
+  likePost(post: Post, e: Event) {
+    let exists = false;
+    if (post.likes) {
+      for (let like of post.likes) {
+        if (like.displayName === this.activeUser.displayName) {
+          this.itemService.likePost(post.id, post.likes).subscribe();
+          exists = true;
+          setTimeout(() => {
+          post.toggleButtonLike = true;
+          let index = post.likes.map(p => p.displayName).indexOf(this.activeUser.displayName);  
+            if (index !== -1) {
+              post.likes?.splice(index, 1);
+              this.itemService.likePost(post.id, post.likes).subscribe();
+            }
+          }, 800);
+        }
+      }
+      setTimeout(() => {
+        if (!exists) {
+          post.likes.push({ displayName: this.activeUser.displayName })
+          this.itemService.likePost(post.id, post.likes).subscribe();
+          post.toggleButtonLike = false;
+        }
+      }, 800);
+    } else {
+      this.itemService.likePost(post.id, [{ displayName: this.activeUser.displayName }]).subscribe();
+    }
+    e.stopPropagation();
+  }
   
   addNewComment() {
 

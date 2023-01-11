@@ -18,6 +18,7 @@ export class MatInputPromptComponent implements OnInit {
   activeUser: any;
   editable = true;
   posts: Post[] = [];
+  categories: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -29,34 +30,34 @@ export class MatInputPromptComponent implements OnInit {
     this.form = this.fb.group({
       author: ['', Validators.required],
       category: ['', Validators.required],
-      description: ['', Validators.required],
-
+      description: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
+    this.itemService.getCategories().subscribe(data => {
+      this.categories = data
+    })
+
     this.itemService.itemToEdit.subscribe((res: any)  => {
-      this.form.get('author').setValue(res?.author)
-      this.form.get('category').setValue(res?.category)
-      this.form.get('description').setValue(res?.description)
-      if (res?.id) {
+      this.form.get('author').setValue(res.author)
+      this.form.get('category').setValue(res.category)
+      this.form.get('description').setValue(res.description)
+      if (res.id) {
         this.hasId = true
       } else {
         this.hasId = false;
       }
-      this.itemId = res?.id;
+      this.itemId = res.id;
     })
 
     this.afs.collection('users').doc(localStorage.getItem('id')!).valueChanges().subscribe(res =>  this.activeUser = res)
 
     this.afs.collection('users').doc<Partial<User>>(localStorage.getItem('id')).get().subscribe(res => {
-      if(this.activeUser?.role !== 'admin') {
-        this.form.get('author')?.setValue(res.data()?.displayName)
-      } 
+      this.form.get('author')?.setValue(res.data()?.displayName) 
     })
 
   }
-
   close() {
     this.itemService.itemToEdit.next(null)
   }
@@ -69,12 +70,21 @@ export class MatInputPromptComponent implements OnInit {
   }
 
   patchPost() { 
-    let category  = this.form.get('category').value;
-    let description = this.form.get('description').value;
-    let isEdited = true;
-    let createdOn =  new Date();
-    this.itemService.patchPost(this.itemId, category, description, createdOn, isEdited).subscribe()
 
+    let post: Partial<Post> = {
+      category: this.form.get('category').value,
+      description: this.form.get('description').value,
+      isEdited: true,
+      createdOn:  new Date(),
+      id: this.itemId
+    }
+    
+
+    this.itemService.patchPost(this.itemId, post).subscribe(
+      data => {
+      this.itemService.post$.next(post)
+    }
+    )
   }
 
   createPost() {
@@ -87,9 +97,13 @@ export class MatInputPromptComponent implements OnInit {
       likes: [],
       isEdited: false,
       comments: [],
-      id: this.itemId,
+      id: this.itemId
     }
-    this.itemService.createNewPost(post).subscribe()
+    this.itemService.createNewPost(post).subscribe(data => {
+      this.itemService.post$.next(post)
+    })
     
   }
+
+
 }
