@@ -15,7 +15,7 @@
   }
 
 .sticky-nav {
-    margin-top: calc(70px + 2rem);
+    margin-top: calc(70px + 1rem);
 }
 
 .add-categories {
@@ -37,12 +37,12 @@
     font-family: cursive;
 }
 .table-wrap {
-    margin-top: 1rem;
+    margin-top: .5rem;
     margin-left: 2rem;
-    height: 266px;
+    height: 454px;
     overflow-y: auto;
     width: 450px;
-    padding-right: 1rem;
+    padding-right: .5rem;
 }
 table,
 thead,

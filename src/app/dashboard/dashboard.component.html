@@ -56,6 +56,9 @@
     <mat-sidenav-content class="px-2">
         <h1 class="text-center timeline">{{activeUser?.displayName ?? 'User'}}'s Timeline</h1>
         <div class="text-right">
+            <button *ngIf="activeUser?.role === 'admin'"
+             mat-raised-button color="primary" [routerLink]="'/categories'" style="margin-right: 1rem;">
+               Control Panel</button>
             <button mat-raised-button color="primary" (click)="onPostCreate()" [disabled]="!activeUser?.displayName">+
                 Add Post</button>
         </div>

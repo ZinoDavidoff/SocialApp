@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
+import { map, Observable, of } from 'rxjs';
 import { ItemService } from '../item.service';
 
 @Component({
@@ -11,7 +12,7 @@ import { ItemService } from '../item.service';
 export class CategoriesComponent implements OnInit {
 
   categories: string[] = [];
-  categoriesToAdd = new FormControl('')
+  categoriesToAdd = new FormControl('', [Validators.required, Validators.minLength(3)], [this.asyncValidator()])
 
   constructor(private itemServise: ItemService) { }
 
@@ -22,9 +23,24 @@ export class CategoriesComponent implements OnInit {
   }
 
   addCategory() {
-    this.categories.push(this.categoriesToAdd.value)
+    this.categories.unshift(this.categoriesToAdd.value)
     this.itemServise.createNewCategories(this.categories).subscribe()
     this.categoriesToAdd.reset();
+  }
+
+  checkIfCategoryExists(value: string) {
+    return of(this.categories.some((val) => val.toLowerCase() === value))
+  }
+
+  asyncValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors> => {
+      return this.checkIfCategoryExists(control.value).pipe(
+        map((result: boolean) =>
+          result ? {categoryAlreadyExists: true} : null
+        )
+      )
+    }
+    
   }
 
 }

@@ -33,7 +33,7 @@
 </div>
 
 <!-- *ngIf="filteredByDescription | async as posts; else loadingRef" -->
-<div class="container-fluid px-5" > 
+<div class="container-fluid px-5" *ngIf="filteredByDescription | async as posts; else loadingRef"> 
   <div class="row g-3">
     <div class="col-3" [@inOutAnimation]="'in'" *ngFor="let post of posts | sorted | slice:0:max">
       <mat-card routerLink="/blog/post/{{post.id}}" class="h-100">
