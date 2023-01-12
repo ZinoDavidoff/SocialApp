@@ -5,6 +5,7 @@ import { PostComponent } from './blog-post/post/post.component';
 import { CategoriesComponent } from './categories/categories.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
+import { AdminGuard } from './shared/admin.guard';
 import { AuthGuard } from './shared/auth.guard';
 
 const routes: Routes = [
@@ -15,7 +16,7 @@ const routes: Routes = [
   ]},
   { path: 'login', component: LoginComponent},
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
-  { path: 'categories', component: CategoriesComponent}
+  { path: 'categories', component: CategoriesComponent, canActivate: [AdminGuard]}
 ];
 
 @NgModule({

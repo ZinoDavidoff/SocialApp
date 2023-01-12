@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { map, Observable, of } from 'rxjs';
-import { ItemService } from '../item.service';
+import { debounceTime, map, Observable, of, startWith, switchMap } from 'rxjs';
+import { ItemService, Post } from '../item.service';
 
 @Component({
   selector: 'app-categories',
@@ -12,7 +12,12 @@ import { ItemService } from '../item.service';
 export class CategoriesComponent implements OnInit {
 
   categories: string[] = [];
-  categoriesToAdd = new FormControl('', [Validators.required, Validators.minLength(3)], [this.asyncValidator()])
+  users: Post[] = [];
+  categoriesToAdd = new FormControl(
+    '',
+    [Validators.required, Validators.minLength(3), Validators.maxLength(12)],
+    [this.asyncValidator()])
+  search = new FormControl('');
 
   constructor(private itemServise: ItemService) { }
 
@@ -20,7 +25,23 @@ export class CategoriesComponent implements OnInit {
     this.itemServise.getCategories().subscribe(data => {
       this.categories = data;
     })
+
+    this.itemServise.getAllPosts().subscribe(data => {
+      this.users = data
+    })
   }
+
+  filteredByAuthor: Observable<Post[]> = this.search?.valueChanges.pipe(
+    startWith(''),
+    debounceTime(800),
+    switchMap(searchValue => {
+      return of(this.users).pipe(
+        map(users => {
+          return users
+            .filter(u => u.author.toLowerCase().includes(searchValue))
+        })
+      );
+    }))
 
   addCategory() {
     this.categories.unshift(this.categoriesToAdd.value)

@@ -211,7 +211,8 @@ export class BlogPostComponent implements OnInit {
         }
       }, 800);
     } else {
-      this.itemService.likePost(post.id, [{ displayName: this.activeUser.displayName }]).subscribe();
+      this.itemService.likePost(post.id, [{ displayName: this.activeUser.displayName }]).subscribe()
+      
     }
     e.stopPropagation();
   }

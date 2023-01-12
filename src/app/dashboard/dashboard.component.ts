@@ -22,7 +22,10 @@ export class DashboardComponent implements OnInit {
   posts: Post[] = [];
 
   nameForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.minLength(3)], this.asyncValidator.bind(this)),
+    name: new FormControl(
+      '',
+      [Validators.required, Validators.minLength(3), Validators.maxLength(19)], 
+      this.asyncValidator.bind(this)),
     photo: new FormControl(''),
     bio: new FormControl('')
   })

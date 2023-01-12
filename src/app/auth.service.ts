@@ -23,7 +23,9 @@ export class AuthService {
     private fireauth: AngularFireAuth,
     private afs: AngularFirestore, 
     private router: Router
-    ) {}
+    ) {
+
+    }
 
     get isLoggedIn(): boolean {
       const user = localStorage.getItem('id');
