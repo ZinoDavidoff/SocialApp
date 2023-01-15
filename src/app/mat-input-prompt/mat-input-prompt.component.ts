@@ -36,7 +36,7 @@ export class MatInputPromptComponent implements OnInit {
 
   ngOnInit(): void {
     this.itemService.getCategories().subscribe(data => {
-      this.categories = data
+      this.categories = data;
     })
 
     this.itemService.itemToEdit.subscribe((res: any)  => {
@@ -58,6 +58,7 @@ export class MatInputPromptComponent implements OnInit {
     })
 
   }
+
   close() {
     this.itemService.itemToEdit.next(null)
   }
@@ -79,7 +80,6 @@ export class MatInputPromptComponent implements OnInit {
       id: this.itemId
     }
     
-
     this.itemService.patchPost(this.itemId, post).subscribe(
       data => {
       this.itemService.post$.next(post)
@@ -102,7 +102,6 @@ export class MatInputPromptComponent implements OnInit {
     this.itemService.createNewPost(post).subscribe(data => {
       this.itemService.post$.next(post)
     })
-    
   }
 
 

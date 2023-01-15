@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { firstValueFrom, map, Observable, Subscription } from 'rxjs';
+import { debounceTime, delay, firstValueFrom, map, Observable, Subject, Subscription } from 'rxjs';
 import { AuthService, User } from '../auth.service';
 import { ItemService, Post } from '../item.service';
 import { MatInputPromptComponent } from '../mat-input-prompt/mat-input-prompt.component';
@@ -17,6 +17,7 @@ export class DashboardComponent implements OnInit {
 
   dataFromDialog: any;
   toggleForm: boolean = false;
+
   state: boolean = true;
   userRole: 'user';
   posts: Post[] = [];
@@ -30,7 +31,8 @@ export class DashboardComponent implements OnInit {
     bio: new FormControl('')
   })
 
-  activeUser: any;
+  activeUser: any | undefined;
+  showspinner: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -40,26 +42,29 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void { 
-    this.itemService.getAllPosts()
+
+    this.showspinner = true;
+
+    this.itemService.getAllPosts().pipe(delay(1000))
       .subscribe((data) => {
         this.posts = data;
+        this.showspinner = false;
         for (let post of this.posts) {
           post.toggleButtonLike = true;
-          setTimeout(() => {
             if (post.likes) {
               for (let like of post.likes) {
-                if (like.displayName === this.activeUser.displayName) {
+                if (like.displayName === this.activeUser?.displayName) {
                   post.toggleButtonLike = false;
                 }
               }
             } else {
               post.toggleButtonLike = true;
             }
-          }, 1000);
         }
       })
 
     this.itemService.post$.subscribe((post: Post) => {
+      
       for (let pos of this.posts) {
         if (pos.id === post.id) {
           let index = this.posts.findIndex(p => p.id === pos.id)
@@ -68,23 +73,21 @@ export class DashboardComponent implements OnInit {
           this.posts.push(post);
         }
       }
-
+      
       this.itemService.getAllPosts().subscribe(
         (post) => {
-          this.posts = post
+          this.posts = post;
           for (let post of this.posts) {
             post.toggleButtonLike = true;
-            setTimeout(() => {
               if (post.likes) {
                 for (let like of post.likes) {
-                  if (like.displayName === this.activeUser.displayName) {
+                  if (like.displayName === this.activeUser?.displayName!) {
                     post.toggleButtonLike = false;
                   }
                 }
               } else {
                 post.toggleButtonLike = true;
               }
-            }, 1000);
           }
         })
     })
@@ -116,7 +119,7 @@ export class DashboardComponent implements OnInit {
       )
     }, 500);
     for (let post of this.posts) {
-      let name = this.activeUser.displayName
+      let name = this.activeUser?.displayName
       let newPost = {
         author: this.nameForm.get('name')?.value,
         imgUrl: this.nameForm.get('photo')?.value,
@@ -130,11 +133,8 @@ export class DashboardComponent implements OnInit {
       }
       if (post.author === name) {
         this.itemService.editPost(newPost).subscribe()
+        this.fetchPost()
       }
-      this.itemService.getAllPosts()
-        .subscribe((data) => {
-          this.posts = data;
-        })
     }
     this.toggleForm = !this.toggleForm;
   }
@@ -155,7 +155,7 @@ export class DashboardComponent implements OnInit {
   asyncValidator() {
     return new Promise(resolve => {
       this.check_displayName().then(snapshot => {
-        if (snapshot.docs.length > 0 && this.activeUser.displayName !== this.nameForm.get('name')?.value) {
+        if (snapshot.docs.length > 0 && this.activeUser?.displayName !== this.nameForm.get('name')?.value) {
           resolve({
             "displayNameTaken": true
           });
@@ -167,7 +167,12 @@ export class DashboardComponent implements OnInit {
   }
 
   check_displayName() {
-    return firstValueFrom(this.afs.collection('users', ref => ref.where('displayName', '==', this.nameForm.get('name').value)).get());
+    return firstValueFrom(
+      this.afs.collection('users', ref => 
+      ref.where(
+        'displayName', '==', this.nameForm.get('name').value
+        ))
+      .get());
   }
 
   onDeletePost(post: Post, e: Event) {
@@ -186,8 +191,7 @@ export class DashboardComponent implements OnInit {
     });
 
     this.itemService.itemToEdit.next(post)
-
-    dialogRef.afterClosed().subscribe((data) => {
+    dialogRef.afterClosed().pipe(delay(1000)).subscribe((data) => {
       this.dataFromDialog = data.form;
       post.isEdited = true;
     });
@@ -199,29 +203,27 @@ export class DashboardComponent implements OnInit {
     let exists = false;
     if (post.likes) {
       for (let like of post.likes) {
-        if (like.displayName === this.activeUser.displayName) {
+        if (like?.displayName === this.activeUser?.displayName) {
           this.itemService.likePost(post.id, post.likes).subscribe();
           exists = true;
-          setTimeout(() => {
           post.toggleButtonLike = true;
-          let index = post.likes.map(p => p.displayName).indexOf(this.activeUser.displayName);  
+          let index = post.likes.map(p => p.displayName).indexOf(this.activeUser?.displayName);  
             if (index !== -1) {
               post.likes?.splice(index, 1);
               this.itemService.likePost(post.id, post.likes).subscribe();
             }
-          }, 800);
         }
       }
-      setTimeout(() => {
         if (!exists) {
-          post.likes.push({ displayName: this.activeUser.displayName })
+          post.likes.push({ 'displayName': this.activeUser?.displayName })
           this.itemService.likePost(post.id, post.likes).subscribe();
           post.toggleButtonLike = false;
         }
-      }, 800);
     } else {
       if(this.activeUser) {
-        this.itemService.likePost(post.id, [{ displayName: this.activeUser.displayName }]).subscribe();
+          post.likes = [{ 'displayName': this.activeUser?.displayName }];
+          this.itemService.likePost(post.id, [{ 'displayName': this.activeUser?.displayName }]).subscribe();
+          post.toggleButtonLike = false;
     } 
   }
     e.stopPropagation();

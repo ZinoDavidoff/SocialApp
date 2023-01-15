@@ -80,7 +80,7 @@ mat-label, mat-select, mat-option {
 
 .numberLikes {
     position: absolute;
-    left: 0%;
+    left: 85%;
     bottom: 45%;
     margin: 0;
     color: #00695c;

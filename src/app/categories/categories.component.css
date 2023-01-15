@@ -2,13 +2,11 @@
     width: 10px;
   }
   
-  /* Track */
   ::-webkit-scrollbar-track {
     background: white;  
     border-radius: 20px;
   }
    
-  /* Handle */
   ::-webkit-scrollbar-thumb {
     background: #00695c; 
     border-radius: 20px;
@@ -20,18 +18,21 @@
 
 .container-flex {
     display: flex;
-    margin-left: auto;
-    margin-right: auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    gap: 2.5rem;
     justify-content: space-evenly;
     max-width: 1400px;
 }
 
 .table1 {
-    width: 28%;
+    flex: 1 1 auto;
 }
 
 .table2 {
-    width: 65%;
+    flex: 3 1 auto;
 }
 
 .headers {

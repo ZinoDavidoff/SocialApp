@@ -89,3 +89,19 @@
 
   </mat-card-content>
 </mat-card>
+
+<h2 class="alert" [class.visible]="auth.isLogged"> 
+  Successful Login!
+</h2>
+
+<h2 class="alert2" [class.visible]="auth.isNotLogged"> 
+  Access Denied!
+</h2>
+
+<h2 class="alert" [class.visible]="auth.isRegister"> 
+  Registration Successful
+</h2>
+
+<h2 class="alert2" [class.visible]="auth.isNotRegister"> 
+  Access Denied!
+</h2>

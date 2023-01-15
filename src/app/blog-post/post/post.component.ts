@@ -5,6 +5,8 @@ import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { delay, Observable } from 'rxjs';
 import { ItemService, Post } from 'src/app/item.service';
+import { MatDialog } from '@angular/material/dialog';
+import { MatInputPromptComponent } from 'src/app/mat-input-prompt/mat-input-prompt.component';
 
 @Component({
   selector: 'app-post',
@@ -80,11 +82,13 @@ export class PostComponent implements OnInit {
   isDisplayed: boolean = false;
   activeUser: any;
   addComment = new FormControl('');
+  dataFromDialog: any;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private itemService: ItemService,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -93,7 +97,6 @@ export class PostComponent implements OnInit {
     .subscribe(post => {
       this.post = post;
         post.toggleButtonLike = true;
-        setTimeout(() => {
           if (post.likes) {
             for (let like of post.likes) {
               if (like.displayName === this.activeUser.displayName) {
@@ -102,9 +105,7 @@ export class PostComponent implements OnInit {
             }
           } else {
             post.toggleButtonLike = true;
-          }
-        }, 1000);
-    
+          }   
     })
 
     this.afs.collection('users')
@@ -120,26 +121,26 @@ export class PostComponent implements OnInit {
         if (like.displayName === this.activeUser.displayName) {
           this.itemService.likePost(post.id, post.likes).subscribe();
           exists = true;
-          setTimeout(() => {
           post.toggleButtonLike = true;
           let index = post.likes.map(p => p.displayName).indexOf(this.activeUser.displayName);  
             if (index !== -1) {
               post.likes?.splice(index, 1);
               this.itemService.likePost(post.id, post.likes).subscribe();
             }
-          }, 800);
         }
       }
-      setTimeout(() => {
         if (!exists) {
           post.likes.push({ displayName: this.activeUser.displayName })
           this.itemService.likePost(post.id, post.likes).subscribe();
           post.toggleButtonLike = false;
         }
-      }, 800);
     } else {
-      this.itemService.likePost(post.id, [{ displayName: this.activeUser.displayName }]).subscribe();
-    }
+      if(this.activeUser) {
+          post.likes = [{ 'displayName': this.activeUser?.displayName }];
+          this.itemService.likePost(post.id, [{ 'displayName': this.activeUser?.displayName }]).subscribe();
+          post.toggleButtonLike = false;
+    } 
+  }
     e.stopPropagation();
   }
   
@@ -166,6 +167,13 @@ export class PostComponent implements OnInit {
     this.post?.comments.splice( this.post?.comments.indexOf(comment), 1)
     this.itemService.addComment(this.activatedRoute.snapshot.params['id'], this.post!.comments).subscribe()
   }
+
+  fetchPost(){
+    this.itemService.getAllPosts()
+    .subscribe((data: any) => this.post = data)
+  }
+
+
 }
 
 

@@ -25,7 +25,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputPromptComponent } from './mat-input-prompt/mat-input-prompt.component';
 import {MatSelectModule} from '@angular/material/select';
-import { NgxMasonryModule } from 'ngx-masonry';
 import { SortedPipe } from './sorted.pipe';
 import { PostComponent } from './blog-post/post/post.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
@@ -50,7 +49,6 @@ import { CategoriesComponent } from './categories/categories.component';
     ReactiveFormsModule,
     FormsModule,
     BrowserAnimationsModule,
-    NgxMasonryModule,
     MatSelectModule,
     MatToolbarModule,
     MatIconModule,

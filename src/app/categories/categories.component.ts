@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormControl, ValidationErrors, Validators } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
-import { debounceTime, map, Observable, of, startWith, switchMap } from 'rxjs';
+import { auditTime, debounceTime, map, Observable, of, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ItemService, Post } from '../item.service';
 
 @Component({
@@ -9,7 +8,7 @@ import { ItemService, Post } from '../item.service';
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent implements OnInit {
+export class CategoriesComponent implements OnInit, OnDestroy {
 
   categories: string[] = [];
   users: Post[] = [];
@@ -18,8 +17,14 @@ export class CategoriesComponent implements OnInit {
     [Validators.required, Validators.minLength(3), Validators.maxLength(12)],
     [this.asyncValidator()])
   search = new FormControl('');
+  private untilDestroy = new Subject();
 
   constructor(private itemServise: ItemService) { }
+
+  ngOnDestroy(): void {
+     this.untilDestroy.next(null);
+      this.untilDestroy.complete();
+  }
 
   ngOnInit(): void {
     this.itemServise.getCategories().subscribe(data => {
@@ -32,8 +37,10 @@ export class CategoriesComponent implements OnInit {
   }
 
   filteredByAuthor: Observable<Post[]> = this.search?.valueChanges.pipe(
+    takeUntil(this.untilDestroy.asObservable()),
     startWith(''),
-    debounceTime(800),
+    debounceTime(1000),
+    tap(),
     switchMap(searchValue => {
       return of(this.users).pipe(
         map(users => {
@@ -47,6 +54,15 @@ export class CategoriesComponent implements OnInit {
     this.categories.unshift(this.categoriesToAdd.value)
     this.itemServise.createNewCategories(this.categories).subscribe()
     this.categoriesToAdd.reset();
+  }
+
+  removeCategory(e: string) {
+    this.categories.forEach((value, index) => {
+      if (value === e) {
+        this.categories.splice(index, 1);
+        this.itemServise.createNewCategories(this.categories).subscribe()
+      } 
+    });
   }
 
   checkIfCategoryExists(value: string) {

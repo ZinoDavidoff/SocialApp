@@ -17,7 +17,10 @@ export interface User {
 })
 export class AuthService {
 
-  userData;
+  isLogged: boolean;
+  isRegister: boolean;
+  isNotLogged: boolean;
+  isNotRegister: boolean;
   
   constructor(
     private fireauth: AngularFireAuth,
@@ -35,11 +38,16 @@ export class AuthService {
     login(email : string, password : string) {
       this.fireauth.signInWithEmailAndPassword(email,password).then((result) => {
         this.SetUserData(result.user)
+        this.isLogged = true;
+        setTimeout(()=> this.isLogged = false, 1500)
         localStorage.setItem('id', result.user?.uid!)
-        alert('Successful Login');
-        this.router.navigate(['/dashboard']);
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 2000);
       }, err => {
-          alert(err.message);
+          console.log(err.message);
+          this.isNotLogged = true;
+          setTimeout(()=> this.isNotLogged = false, 1500)
       })
     }
 
@@ -47,9 +55,12 @@ export class AuthService {
       this.fireauth.createUserWithEmailAndPassword(email, password).then((result) => {
         localStorage.setItem('id', result.user?.uid!)
         this.SetUserData(result.user)
-        alert('Registration Successful');
+        this.isRegister = true;
+        setTimeout(()=> this.isRegister = false, 1500)
       }, err => {
-        alert(err.message);
+        console.log(err.message);
+        this.isNotRegister = true;
+        setTimeout(()=> this.isNotRegister = false, 1500)
       })
     }
 

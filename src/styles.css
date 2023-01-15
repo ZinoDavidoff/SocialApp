@@ -2,4 +2,4 @@
 
 
 html, body { height: 100%; }
-body { margin: 0; font-family: "Oswald", sans-serif; background-color: gainsboro; }
+body { margin: 0; font-family: "Oswald", sans-serif; background-color: gainsboro; overflow-y: visible;}

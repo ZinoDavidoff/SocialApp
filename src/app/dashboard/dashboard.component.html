@@ -1,4 +1,4 @@
-<mat-sidenav-container class="example-container" *ngIf="activeUser; else loadingRef">
+<mat-sidenav-container class="example-container" *ngIf="activeUser">
     <mat-sidenav #sidenav mode="side" opened class="example-sidenav" fixedInViewport fixedTopGap="70">
         <mat-nav-list>
             <div class="profile-image">
@@ -63,10 +63,10 @@
                 Add Post</button>
         </div>
 
-        <div class="container-fluid py-4">
+        <div class="container-fluid py-4" >
             <div class="row g-3">
-                <ng-container *ngFor="let post of posts | sorted">
-                    <div class="col-4" *ngIf="activeUser?.displayName == post.author">
+                <ng-container  *ngFor="let post of posts | sorted">
+                    <div class="col-4" *ngIf="activeUser?.displayName === post.author">
                         <mat-card class="h-100" routerLink="/blog/post/{{post.id}}">
                             <div>
                                 <mat-card-header>
@@ -104,8 +104,11 @@
                                             (click)='onDeletePost(post, $event)'><mat-icon>delete</mat-icon></button>
                                     </div>
                                     <div>
-                                        <button mat-button color="primary">Write a Comment<mat-icon>
-                                                comment</mat-icon></button>
+                                        <button mat-button color="primary" *ngIf="activeUser">
+                                            Write a comment
+                                            <mat-icon>comment</mat-icon>
+                                            <span class="numberLikes" *ngIf="activeUser && post.comments?.length !== 0">{{post.comments?.length}}</span>
+                                          </button>
                                     </div>
                                 </mat-card-actions>
                             </div>
@@ -117,9 +120,7 @@
     </mat-sidenav-content>
 </mat-sidenav-container>
 
-<ng-template #loadingRef>
-    <div class="spinner"></div>
-</ng-template>
+<div class="spinner" *ngIf="showspinner && activeUser?.displayName"></div>
 
 <ng-container *ngIf="!activeUser?.displayName">
     <div class="showMe" *ngIf="state">

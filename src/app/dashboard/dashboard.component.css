@@ -99,7 +99,7 @@ textarea {
 
 .numberLikes {
   position: absolute;
-  left: 0%;
+  left: 85%;
   bottom: 45%;
   margin: 0;
   color: #00695c;
@@ -129,7 +129,7 @@ textarea {
   height: 80px;
   animation: spin 700ms linear infinite;
   top: 50%;
-  left: 50%;
+  left: 60%;
   position: absolute;
 }
 @keyframes spin {

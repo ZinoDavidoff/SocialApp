@@ -15,7 +15,7 @@ export class NavbarComponent implements OnInit, DoCheck {
   constructor(private auth: AuthService, private afs: AngularFirestore) { }
 
   ngDoCheck(): void {
-    if(localStorage.getItem('id') != null) {
+    if (localStorage.getItem('id') != null) {
       this.toggle = true;
     } else {
       this.toggle = false;
@@ -29,7 +29,6 @@ export class NavbarComponent implements OnInit, DoCheck {
     .subscribe(res => {
       this.activeUser = res;
     })
-
   }
 
   logOut() {

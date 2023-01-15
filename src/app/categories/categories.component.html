@@ -33,7 +33,7 @@
               <th scope="row" class="text-white color">{{i + 1}}</th>
               <td><strong>{{cat}}</strong></td>
               <td>
-                <button mat-button style="color: red;">
+                <button mat-button style="color: red;" (click)="removeCategory(cat)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
                     viewBox="0 0 16 16">
                     <path

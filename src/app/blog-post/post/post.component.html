@@ -19,7 +19,7 @@
   <mat-card-actions class="no-space">
     <div>
       <button matTooltip="Like this Post" mat-button color="primary" (click)='likePost(post, $event)'
-        class="first-child">
+        class="first-child" *ngIf="activeUser?.displayName">
         <span class="numberLikes" *ngIf="activeUser && post.likes?.length !== 0">{{post.likes?.length}}</span>
         <mat-icon 
           [ngClass]=
@@ -28,14 +28,17 @@
           thumb_up_alt
         </mat-icon>
       </button>
-      <button matTooltip="Edit this Post" mat-button color="accent"
+      <button matTooltip="Edit this Post" mat-button color="accent" 
         *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>edit</mat-icon></button>
-      <button matTooltip="Delete this Post" mat-button color="warn"
-        *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>delete</mat-icon></button>
+        <button mat-button color="warn" matTooltip="Delete this Post" 
+          *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>delete</mat-icon></button>
     </div>
     <div>
-      <button mat-button color="primary" (click)="isDisplayed = !isDisplayed;">Write a Comment<mat-icon>
-          comment</mat-icon></button>
+          <button mat-button color="primary" *ngIf="activeUser?.displayName" (click)="isDisplayed = !isDisplayed;">
+            Write a comment
+            <mat-icon>comment</mat-icon>
+            <span class="numberLikes" *ngIf="activeUser && post.comments?.length !== 0">{{post.comments?.length}}</span>
+          </button>
     </div>
   </mat-card-actions>
 </mat-card>

@@ -57,7 +57,7 @@
           <mat-card-actions class="no-space">
             <div>
 
-              <button mat-button color="primary" matTooltip="Like this Comment" class="first-child" *ngIf="activeUser"
+              <button mat-button color="primary" matTooltip="Like this Comment" class="first-child" *ngIf="activeUser?.displayName"
                 (click)='likePost(post, $event)'>
                 <span class="numberLikes" *ngIf="activeUser && post.likes?.length !== 0">{{post.likes?.length}}</span>
                 <mat-icon [ngClass]="{'material-icons-outlined': post?.toggleButtonLike == true,
@@ -73,8 +73,11 @@
                 *ngIf="activeUser?.displayName == post.author || activeUser?.role === 'admin'"><mat-icon>delete</mat-icon></button>
             </div>
             <div>
-              <button mat-button color="primary" *ngIf="activeUser">Write a Comment<mat-icon>
-                  comment</mat-icon></button>
+              <button mat-button color="primary" *ngIf="activeUser?.displayName">
+                Write a comment
+                <mat-icon>comment</mat-icon>
+                <span class="numberLikes" *ngIf="activeUser && post.comments?.length !== 0">{{post.comments?.length}}</span>
+              </button>
             </div>
           </mat-card-actions>
         </div>

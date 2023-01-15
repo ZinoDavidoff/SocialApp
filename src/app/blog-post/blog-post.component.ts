@@ -1,14 +1,12 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { concatMap, debounceTime, delay, map, startWith, switchMap, take } from 'rxjs/operators';
+import { debounceTime, map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ItemService, Post } from '../item.service';
 import { MatInputPromptComponent } from '../mat-input-prompt/mat-input-prompt.component';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { AuthService } from '../auth.service';
+import { Observable, of, Subject } from 'rxjs';
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-blog-post',
@@ -72,25 +70,28 @@ import { ActivatedRoute, Router } from '@angular/router';
     ])
   ]
 })
-export class BlogPostComponent implements OnInit {
+export class BlogPostComponent implements OnInit, OnDestroy {
 
   max: number = 8;
 
   textSearch: FormControl = new FormControl('');
+  private untilDestroy = new Subject();
   categories: FormControl = new FormControl('Description');
   posts: Post[] = [];
 
   dataFromDialog: any;
-  activeUser: any;
+  activeUser: any | undefined;
 
   constructor(
-    private route: Router,
-    private ref: ChangeDetectorRef,
-    private router: ActivatedRoute,
     private itemService: ItemService,
     private dialog: MatDialog,
-    private auth: AuthService,
     private afs: AngularFirestore) { }
+
+
+  ngOnDestroy(): void {
+    this.untilDestroy.next(null);
+    this.untilDestroy.complete();
+  }
 
   ngOnInit(): void {
 
@@ -102,7 +103,7 @@ export class BlogPostComponent implements OnInit {
           setTimeout(() => {
             if (post.likes) {
               for (let like of post.likes) {
-                if (like.displayName === this.activeUser.displayName) {
+                if (like.displayName === this.activeUser?.displayName) {
                   post.toggleButtonLike = false;
                 }
               }
@@ -112,6 +113,17 @@ export class BlogPostComponent implements OnInit {
           }, 1000);
         }
       })
+
+      this.itemService.post$.subscribe((post: Post) => {
+        for (let pos of this.posts) {
+        if (pos.id === post.id) {
+          let index = this.posts.findIndex(p => p.id === pos.id)
+          this.posts[index] = post;
+        }
+      }
+      this.itemService.getAllPosts().subscribe(p => {this.posts = p})
+    })
+    
 
     this.afs.collection('users')
       .doc(localStorage.getItem('id')!)
@@ -127,8 +139,10 @@ export class BlogPostComponent implements OnInit {
   }
 
   filteredByDescription: Observable<Post[]> = this.textSearch?.valueChanges.pipe(
+    takeUntil(this.untilDestroy.asObservable()),
     startWith(''),
-    debounceTime(800),
+    debounceTime(1500),
+    tap(),
     switchMap(searchValue => {
   
       if (this.categories.value! === 'Description') {
@@ -177,10 +191,10 @@ export class BlogPostComponent implements OnInit {
     });
 
     this.itemService.itemToEdit.next(post);
-
     dialogRef.afterClosed().subscribe((data) => {
       this.dataFromDialog = data.form;
       post.isEdited = true;
+      
     });
 
     e.stopPropagation();
@@ -190,33 +204,33 @@ export class BlogPostComponent implements OnInit {
     let exists = false;
     if (post.likes) {
       for (let like of post.likes) {
-        if (like.displayName === this.activeUser.displayName) {
+        if (like.displayName === this.activeUser?.displayName) {
           this.itemService.likePost(post.id, post.likes).subscribe();
           exists = true;
-          setTimeout(() => {
           post.toggleButtonLike = true;
           let index = post.likes.map(p => p.displayName).indexOf(this.activeUser.displayName);  
             if (index !== -1) {
               post.likes?.splice(index, 1);
               this.itemService.likePost(post.id, post.likes).subscribe();
             }
-          }, 800);
         }
       }
-      setTimeout(() => {
         if (!exists) {
           post.likes.push({ displayName: this.activeUser.displayName })
           this.itemService.likePost(post.id, post.likes).subscribe();
           post.toggleButtonLike = false;
         }
-      }, 800);
     } else {
-      this.itemService.likePost(post.id, [{ displayName: this.activeUser.displayName }]).subscribe()
-      
-    }
+      if(this.activeUser) {
+          post.likes = [{ 'displayName': this.activeUser?.displayName }];
+          this.itemService.likePost(post.id, [{ 'displayName': this.activeUser?.displayName }]).subscribe();
+          post.toggleButtonLike = false;
+    } 
+  }
     e.stopPropagation();
   }
 
+  
 
 }
 
