@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-
-
 html, body { height: 100%; }
-body { margin: 0; font-family: "Oswald", sans-serif; background-color: gainsboro; overflow-y: visible;}
+body { margin: 0; font-family: "Oswald", sans-serif; background-color: gainsboro;}
+app-root { z-index: 1; }  
+app-toast, .toast { z-index: 2; }

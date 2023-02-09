@@ -1,0 +1,87 @@
+<mat-sidenav-container class="example-container" *ngIf="activeUser">
+    <mat-sidenav #sidenav mode="side" opened class="example-sidenav" fixedInViewport fixedTopGap="70">
+        <mat-nav-list>
+            <div class="profile-image">
+                <img width="80" height="80" class="margin-top mat-elevation-z1"
+                    [src]="activeUser?.photoURL ?? '/assets/img/image-placeholder.png'" />
+                <h2 mat-list-item>
+                    {{activeUser?.displayName ?? 'User'}}
+                </h2>
+                <h2 class="bio">
+                    <h3 mat-list-item>My Bio</h3>
+                    <h2 mat-list-item class="user-bio" *ngIf="activeUser?.bio">
+                        {{activeUser?.bio}}
+                    </h2>
+                    <span class="triangle"></span>
+                </h2>
+                <button mat-raised-button color="primary" (click)="toggleForm = !toggleForm;  fetchData()"
+                    [class.animated-button]="!activeUser?.displayName">Update Profile</button>
+
+                <form [formGroup]="nameForm" *ngIf="toggleForm">
+                    <div class="mat-input-height">
+                        <mat-form-field appearance="standard" class="mat-input-width">
+                            <input type="text" matInput formControlName="name">
+                            <mat-label>Enter your Name</mat-label>
+                            <mat-error *ngIf="nameForm.controls['name'].errors?.['required']">
+                                You must enter a value
+                            </mat-error>
+                            <mat-error *ngIf="nameForm.controls['name'].errors?.['minlength']">
+                                Required length is at least 3 characters
+                            </mat-error>
+                            <mat-error *ngIf="nameForm.controls['name'].errors?.['displayNameTaken']">
+                                Username already taken!
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field appearance="standard" class="mat-input-width">
+                            <input type="text" matInput formControlName="photo" [value]="nameForm.value.photo">
+                            <mat-label>Enter your Photo URL</mat-label>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="mat-input-width">
+                            <textarea type="text" #input matInput formControlName="bio" maxlength="200"></textarea>
+                            <mat-label>Enter your Bio</mat-label>
+                            <mat-hint align="start" [ngStyle]="{color: '#00695c'}">Max 200 characters</mat-hint>
+                            <mat-hint align="end" [ngStyle]="{color: '#00695c'}">{{input.value.length}}/200</mat-hint>
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <button mat-raised-button color="primary" type="button" (click)="updateProfile()"
+                            [disabled]="nameForm.invalid" style="margin-bottom: 26px;">Submit</button>
+                    </div>
+
+                </form>
+            </div>
+        </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="px-2">
+        <h1 class="text-center timeline">{{activeUser?.displayName ?? 'User'}}'s Timeline</h1>
+        <div class="text-right">
+            <button *ngIf="activeUser?.role === 'admin'"
+             mat-raised-button color="primary" [routerLink]="'/categories'" style="margin-right: 1rem;">
+               Control Panel</button>
+            <button mat-raised-button color="primary" (click)="onPostCreate()" [disabled]="!activeUser?.displayName">+
+                Add Post</button>
+        </div>
+
+        <div class="container-fluid py-4" >
+            <div class="row g-3">
+                <ng-container  *ngFor="let post of posts | sorted">
+                    <div class="col-sm-12 col-md-6 col-lg-4" *ngIf="activeUser?.displayName === post.author">
+                        <app-card [post]="post" (onDelete)="onDeletePost($event)"></app-card>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>
+
+<app-spinner 
+ *ngIf="showspinner && activeUser?.displayName"
+ [ngClass]="'spinner'">
+</app-spinner>
+
+<ng-container *ngIf="!activeUser?.displayName">
+    <div class="showMe" *ngIf="state">
+        <h3>Please update your Profile Data to publish your first post</h3>
+    </div>
+</ng-container>

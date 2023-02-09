@@ -1,0 +1,14 @@
+  <div 
+  [@toastTrigger]
+  *ngFor="let toaster of toaster"
+   class="toast {{addToasterClass(toaster)}}"
+   >
+    <div>
+      {{toaster?.message}}  
+    </div>  
+  <a class="close-btn" (click)="removeToaster()">    
+    <small>
+      X
+    </small>  
+  </a>
+</div>
