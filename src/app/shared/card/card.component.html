@@ -1,5 +1,5 @@
 <mat-card routerLink="/blog/post/{{post.id}}" class="h-100">
-    <div>
+    <div [@slideInOut]>
       <mat-card-header>
         <img mat-card-avatar [src]="post.imgUrl ?? '/assets/img/image-placeholder.png'">
         <mat-card-title>{{post.author}}</mat-card-title>

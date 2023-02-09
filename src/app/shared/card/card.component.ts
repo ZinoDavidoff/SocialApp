@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +12,21 @@ import { MatInputPromptComponent } from '../mat-input-prompt/mat-input-prompt.co
 @Component({
   selector: 'app-card',
   templateUrl: './card.component.html',
-  styleUrls: ['./card.component.css']
+  styleUrls: ['./card.component.css'],
+  animations: [
+    trigger('slideInOut', [
+    transition(':enter', [
+      style({ opacity: 0 , height: '0'}),
+      animate('250ms', style({ height: '*'})),
+      animate('150ms', style({ opacity: 1 }))
+    ]),
+    transition(':leave', [
+      style({ opacity: 1, height: '*'}),
+      animate('150ms', style({ opacity: 0 })),
+      animate('250ms', style({ height: '0' }))
+    ])
+  ])
+ ]
 })
 export class CardComponent implements OnInit {
 
