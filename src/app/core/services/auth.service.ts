@@ -9,6 +9,7 @@ import { ToastService } from './toast.service';
   providedIn: 'root'
 })
 export class AuthService {
+  activeUser: any;
   
   constructor(
     private fireauth: AngularFireAuth,
@@ -16,7 +17,7 @@ export class AuthService {
     private router: Router,
     private toast: ToastService
     ) {
-      
+
     }
 
     get isLoggedIn(): boolean {

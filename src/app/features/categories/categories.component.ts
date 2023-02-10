@@ -57,7 +57,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
   filteredByAuthor: Observable<Post[]> = this.search?.valueChanges.pipe(
     takeUntil(this.untilDestroy.asObservable()),
     startWith(''),
-    debounceTime(1500),
+    debounceTime(1300),
     tap(),
     switchMap(searchValue => {
       return of(this.users).pipe(
