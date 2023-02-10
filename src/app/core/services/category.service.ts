@@ -11,11 +11,11 @@ export class CategoryService {
 
   createNewCategories(categories: string[]): Observable<string[]> {
     return this.http.put<string[]>("https://myangularproject-90105-default-rtdb.firebaseio.com/categories.json", categories)
-  } 
+  }
 
   getCategories(): Observable<string[]> {
     return this.http.get<string[]>("https://myangularproject-90105-default-rtdb.firebaseio.com/categories.json")
-  } 
+  }
 
   editCategory(categories: string[]): Observable<string[]> {
     return this.http.put<string[]>("https://myangularproject-90105-default-rtdb.firebaseio.com/categories.json", categories)

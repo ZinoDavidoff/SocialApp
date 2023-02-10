@@ -54,35 +54,35 @@ import { ToastService } from 'src/app/core/services/toast.service';
     ])
   ]
 })
-export class ToastComponent implements OnInit {  
+export class ToastComponent implements OnInit {
 
   toaster: TOAST[] = [];
 
-  constructor(public toast: ToastService) { }  
+  constructor(public toast: ToastService) { }
 
   ngOnInit(): void {
     this.toast.getAlert()
-    .subscribe((alert: TOAST) => {
-      this.toaster = [];
-      if (!alert) {
+      .subscribe((alert: TOAST) => {
         this.toaster = [];
-        return;
-      } 
+        if (!alert) {
+          this.toaster = [];
+          return;
+        }
         this.toaster.push(alert);
         setTimeout(() => {
-         this.toast.hideNotification(); 
+          this.toast.hideNotification();
         }, 3000);
-    });
+      });
   }
 
   removeToaster() {
-    this.toast.hideNotification(); 
+    this.toast.hideNotification();
   }
 
   addToasterClass(alert: TOAST) {
-    if (!alert) {  
-      return;  
-    }  
+    if (!alert) {
+      return;
+    }
     switch (alert.type) {
       case TOAST_STATE.Success:
         return 'success-toast';
@@ -93,6 +93,6 @@ export class ToastComponent implements OnInit {
       case TOAST_STATE.Warning:
         return 'warning-toast';
     }
-  }  
+  }
 
 }

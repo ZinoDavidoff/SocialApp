@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
 
     this.loginForm = new FormGroup({
-      'loginEmail': new FormControl(null, [Validators.required, Validators.email]), 
+      'loginEmail': new FormControl(null, [Validators.required, Validators.email]),
       'loginPassword': new FormControl(null, Validators.required),
     });
 
@@ -42,8 +42,9 @@ export class LoginComponent implements OnInit {
 
   matchValidator(control: AbstractControl, controlTwo: AbstractControl): ValidatorFn {
     return () => {
-      if (control.value !== controlTwo.value){
-        return {match_error: 'Value does not match'}};
+      if (control.value !== controlTwo.value) {
+        return { match_error: 'Value does not match' }
+      };
       return null;
     };
   }
@@ -52,16 +53,16 @@ export class LoginComponent implements OnInit {
     this.auth.login(
       this.loginForm.get('loginEmail')?.value,
       this.loginForm.get('loginPassword')?.value
-      );
-      this.loginForm.reset();
+    );
+    this.loginForm.reset();
   }
 
   onRegister() {
     this.auth.register(
       this.registerForm.get('registerEmail')?.value,
       this.registerForm.get('registerPassword')?.value,
-      );
-      this.registerForm.reset();
+    );
+    this.registerForm.reset();
   }
 
 }

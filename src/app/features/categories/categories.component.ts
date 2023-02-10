@@ -37,11 +37,11 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     public authService: AuthService,
     private toast: ToastService
-    ) { }
+  ) { }
 
   ngOnDestroy(): void {
-     this.untilDestroy.next(null);
-      this.untilDestroy.complete();
+    this.untilDestroy.next(null);
+    this.untilDestroy.complete();
   }
 
   ngOnInit(): void {
@@ -102,7 +102,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
       if (value === e) {
         this.categories.splice(index, 1);
         this.categoryService.createNewCategories(this.categories).subscribe()
-      } 
+      }
     });
     this.toast.success("This category has been deleted");
   }
@@ -115,11 +115,11 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     return (control: AbstractControl): Observable<ValidationErrors> => {
       return this.checkIfCategoryExists(control.value).pipe(
         map((result: boolean) =>
-          result ? {categoryAlreadyExists: true} : null
+          result ? { categoryAlreadyExists: true } : null
         )
       )
     }
-    
+
   }
 
 }

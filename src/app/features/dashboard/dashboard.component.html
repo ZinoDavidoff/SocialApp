@@ -56,16 +56,16 @@
     <mat-sidenav-content class="px-2">
         <h1 class="text-center timeline">{{activeUser?.displayName ?? 'User'}}'s Timeline</h1>
         <div class="text-right">
-            <button *ngIf="activeUser?.role === 'admin'"
-             mat-raised-button color="primary" [routerLink]="'/categories'" style="margin-right: 1rem;">
-               Control Panel</button>
+            <button *ngIf="activeUser?.role === 'admin'" mat-raised-button color="primary" [routerLink]="'/categories'"
+                style="margin-right: 1rem;">
+                Control Panel</button>
             <button mat-raised-button color="primary" (click)="onPostCreate()" [disabled]="!activeUser?.displayName">+
                 Add Post</button>
         </div>
 
-        <div class="container-fluid py-4" >
+        <div class="container-fluid py-4">
             <div class="row g-3">
-                <ng-container  *ngFor="let post of posts | sorted">
+                <ng-container *ngFor="let post of posts | sorted">
                     <div class="col-sm-12 col-md-6 col-lg-4" *ngIf="activeUser?.displayName === post.author">
                         <app-card [post]="post" (onDelete)="onDeletePost($event)"></app-card>
                     </div>
@@ -75,9 +75,7 @@
     </mat-sidenav-content>
 </mat-sidenav-container>
 
-<app-spinner 
- *ngIf="showspinner && activeUser?.displayName"
- [ngClass]="'spinner'">
+<app-spinner *ngIf="showspinner && activeUser?.displayName" [ngClass]="'spinner'">
 </app-spinner>
 
 <ng-container *ngIf="!activeUser?.displayName">

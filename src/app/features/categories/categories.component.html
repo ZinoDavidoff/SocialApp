@@ -1,6 +1,6 @@
 <div class="overflow-hidden" *ngIf="filteredByAuthor | async as users; else loadingRef">
   <div class="sticky-nav"></div>
-  <div class="container-flex" >
+  <div class="container-flex">
     <div class="table1">
       <div class="d-block headers">
         <button *ngIf="!toggle" mat-raised-button color="primary" (click)="addCategory()" class="add-categories"
@@ -22,7 +22,8 @@
           <mat-error *ngIf="categoriesToAdd.errors?.['minlength'] || categoriesToEdit.errors?.['minlength']">
             Min required at least 3 characters
           </mat-error>
-          <mat-error *ngIf="categoriesToAdd.errors?.['categoryAlreadyExists'] || categoriesToEdit.errors?.['categoryAlreadyExists']">
+          <mat-error
+            *ngIf="categoriesToAdd.errors?.['categoryAlreadyExists'] || categoriesToEdit.errors?.['categoryAlreadyExists']">
             Category already exists
           </mat-error>
         </mat-form-field>
@@ -51,8 +52,8 @@
                   </svg>
                 </button>
                 <button mat-button style="color: red; min-width: 0;" (click)="toggle = !toggle; getValue(cat)">
-                  <svg width="18" height="18" viewBox="0 0 24 24" id="_24x24_On_Light_Edit" data-name="24x24/On Light/Edit" xmlns="http://www.w3.org/2000/svg"
-                    fill="#00695c">
+                  <svg width="18" height="18" viewBox="0 0 24 24" id="_24x24_On_Light_Edit"
+                    data-name="24x24/On Light/Edit" xmlns="http://www.w3.org/2000/svg" fill="#00695c">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                     <g id="SVGRepo_iconCarrier">
@@ -100,7 +101,7 @@
       </div>
     </div>
   </div>
- 
+
 </div>
 
 <ng-template #loadingRef>

@@ -86,8 +86,8 @@ export class BlogPostComponent implements OnInit, OnDestroy {
     private itemService: ItemService,
     private afs: AngularFirestore,
     public authService: AuthService,
-    ) { }
-  
+  ) { }
+
   ngOnDestroy(): void {
     this.untilDestroy.next(null);
     this.untilDestroy.complete();
@@ -113,17 +113,17 @@ export class BlogPostComponent implements OnInit, OnDestroy {
           }, 1000);
         }
       })
-    
-      this.itemService.post$.subscribe((post: Post) => {
-      
-        for (let pos of this.posts) {
-          if (pos.id === post.id) {
-            let index = this.posts.findIndex(p => p.id === pos.id)
-            this.posts[index] = post;
-          }
+
+    this.itemService.post$.subscribe((post: Post) => {
+
+      for (let pos of this.posts) {
+        if (pos.id === post.id) {
+          let index = this.posts.findIndex(p => p.id === pos.id)
+          this.posts[index] = post;
         }
-        
-      })
+      }
+
+    })
 
     this.afs.collection('users')
       .doc(localStorage.getItem('id')!)
@@ -144,7 +144,7 @@ export class BlogPostComponent implements OnInit, OnDestroy {
     debounceTime(1500),
     tap(),
     switchMap(searchValue => {
-  
+
       if (this.categories.value! === 'Description') {
         return of(this.posts)
           .pipe(
@@ -166,8 +166,8 @@ export class BlogPostComponent implements OnInit, OnDestroy {
           .pipe(
             map(post => {
               return post.filter(
-                 post => post.category?.toLowerCase().includes(searchValue)
-                   )
+                post => post.category?.toLowerCase().includes(searchValue)
+              )
             }))
       } else
         return of(this.posts)

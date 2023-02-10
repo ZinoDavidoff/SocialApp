@@ -15,18 +15,18 @@ import { MatInputPromptComponent } from '../mat-input-prompt/mat-input-prompt.co
   styleUrls: ['./card.component.css'],
   animations: [
     trigger('slideInOut', [
-    transition(':enter', [
-      style({ opacity: 0 , height: '0'}),
-      animate('250ms', style({ height: '*'})),
-      animate('150ms', style({ opacity: 1 }))
-    ]),
-    transition(':leave', [
-      style({ opacity: 1, height: '*'}),
-      animate('150ms', style({ opacity: 0 })),
-      animate('250ms', style({ height: '0' }))
+      transition(':enter', [
+        style({ opacity: 0, height: '0' }),
+        animate('250ms', style({ height: '*' })),
+        animate('150ms', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        style({ opacity: 1, height: '*' }),
+        animate('150ms', style({ opacity: 0 })),
+        animate('250ms', style({ height: '0' }))
+      ])
     ])
-  ])
- ]
+  ]
 })
 export class CardComponent implements OnInit {
 
@@ -54,7 +54,7 @@ export class CardComponent implements OnInit {
 
   onDeletePost(post: Post, e: Event) {
     this.onDelete.emit(post);
-   
+
     this.toast.success('Post successfuly deleted');
     e.stopPropagation();
   }

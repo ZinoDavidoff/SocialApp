@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit {
   nameForm = new FormGroup({
     name: new FormControl(
       '',
-      [Validators.required, Validators.minLength(3), Validators.maxLength(19)], 
+      [Validators.required, Validators.minLength(3), Validators.maxLength(19)],
       this.asyncValidator.bind(this)),
     photo: new FormControl(''),
     bio: new FormControl('')
@@ -45,54 +45,54 @@ export class DashboardComponent implements OnInit {
     private toast: ToastService
   ) { }
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
     this.showspinner = true;
     this.itemService.getAllPosts().pipe(delay(1000))
-     .subscribe((data) => {
-       this.posts = data;
-       this.showspinner = false;
-       for (let post of this.posts) {
-         post.toggleButtonLike = true;
-           if (post.likes) {
-             for (let like of post.likes) {
-               if (like.displayName === this.activeUser?.displayName) {
-                 post.toggleButtonLike = false;
-               }
-             }
-           } else {
-             post.toggleButtonLike = true;
-           }
-       }
-     })
+      .subscribe((data) => {
+        this.posts = data;
+        this.showspinner = false;
+        for (let post of this.posts) {
+          post.toggleButtonLike = true;
+          if (post.likes) {
+            for (let like of post.likes) {
+              if (like.displayName === this.activeUser?.displayName) {
+                post.toggleButtonLike = false;
+              }
+            }
+          } else {
+            post.toggleButtonLike = true;
+          }
+        }
+      })
 
-   this.itemService.post$.subscribe((post: Post) => {
-     
-     for (let pos of this.posts) {
-       if (pos.id === post.id) {
-         let index = this.posts.findIndex(p => p.id === pos.id)
-         this.posts[index] = post;
-       } else {
-         this.posts.push(post);
-       }
-     }
-     
-     this.itemService.getAllPosts().subscribe(
-       (post) => {
-         this.posts = post;
-         for (let post of this.posts) {
-           post.toggleButtonLike = true;
-             if (post.likes) {
-               for (let like of post.likes) {
-                 if (like.displayName === this.activeUser?.displayName!) {
-                   post.toggleButtonLike = false;
-                 }
-               }
-             } else {
-               post.toggleButtonLike = true;
-             }
-         }
-       })
-   })
+    this.itemService.post$.subscribe((post: Post) => {
+
+      for (let pos of this.posts) {
+        if (pos.id === post.id) {
+          let index = this.posts.findIndex(p => p.id === pos.id)
+          this.posts[index] = post;
+        } else {
+          this.posts.push(post);
+        }
+      }
+
+      this.itemService.getAllPosts().subscribe(
+        (post) => {
+          this.posts = post;
+          for (let post of this.posts) {
+            post.toggleButtonLike = true;
+            if (post.likes) {
+              for (let like of post.likes) {
+                if (like.displayName === this.activeUser?.displayName!) {
+                  post.toggleButtonLike = false;
+                }
+              }
+            } else {
+              post.toggleButtonLike = true;
+            }
+          }
+        })
+    })
 
     this.afs.collection('users').doc(localStorage.getItem('id')!).valueChanges().subscribe((res: any) => {
       this.activeUser = res
@@ -200,12 +200,12 @@ export class DashboardComponent implements OnInit {
 
   check_displayName() {
     return firstValueFrom(
-      this.afs.collection('users', ref => 
-      ref.where(
-        'displayName', '==', this.nameForm.get('name').value
+      this.afs.collection('users', ref =>
+        ref.where(
+          'displayName', '==', this.nameForm.get('name').value
         ))
-      .get());
+        .get());
   }
 
-  
+
 }

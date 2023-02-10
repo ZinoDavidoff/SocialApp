@@ -11,35 +11,35 @@ import { ToastService } from '../services/toast.service';
 })
 export class AdminGuard implements CanActivate {
   activeUser: any;
-  
+
   constructor(
     public authService: AuthService,
     private afs: AngularFirestore,
     public router: Router,
     private toast: ToastService
-  ){
-  
+  ) {
+
   }
   canActivate(): Observable<boolean> | Promise<boolean> | boolean {
-   if(!localStorage.getItem('id')){
-    this.router.navigate(['/login'])
-    this.toast.warn('Please Login with your credentials!');
-    return false
-   }else 
-    this.afs.collection('users')
-      .doc(localStorage.getItem('id')!)
-      .get()
-      .subscribe((res: any) => {
-        if(res.data().role === 'admin'){
-          return true
-        } else {
-          this.toast.warn('This section is prohibit for Users!');
-          this.router.navigate(['/blog'])
-        }        
-      })
+    if (!localStorage.getItem('id')) {
+      this.router.navigate(['/login'])
+      this.toast.warn('Please Login with your credentials!');
+      return false
+    } else
+      this.afs.collection('users')
+        .doc(localStorage.getItem('id')!)
+        .get()
+        .subscribe((res: any) => {
+          if (res.data().role === 'admin') {
+            return true
+          } else {
+            this.toast.warn('This section is prohibit for Users!');
+            this.router.navigate(['/blog'])
+          }
+        })
     return true;
   }
 
-  
-  
+
+
 }
